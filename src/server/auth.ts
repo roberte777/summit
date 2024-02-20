@@ -8,9 +8,11 @@ import {
 import GoogleProvider from "next-auth/providers/google";
 import Auth0Provider from "next-auth/providers/auth0";
 import EmailProvider from "next-auth/providers/email";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
+import * as bcrypt from "bcrypt";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -40,16 +42,96 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
+    session: ({ session, token }) => ({
       ...session,
       user: {
         ...session.user,
-        id: user.id,
+        id: token.sub,
       },
     }),
   },
+  session: {
+    strategy: "jwt",
+    maxAge: 1 * 24 * 60 * 60, // 1 day
+  },
   adapter: PrismaAdapter(db),
   providers: [
+    CredentialsProvider({
+      id: "signin",
+      name: "Credentials",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials) => {
+        if (!credentials) {
+          return null;
+        }
+        const creds = await db.credentials.findFirst({
+          where: {
+            username: credentials.username,
+          },
+        });
+        if (
+          creds &&
+          (await bcrypt.compare(credentials.password, creds.password))
+        ) {
+          const user = await db.user.findFirst({
+            where: {
+              credentials: {
+                id: creds.id,
+              },
+            },
+          });
+          if (!user) {
+            throw new Error("User not found");
+          }
+          return user;
+        } else {
+          throw new Error("Invalid credentials");
+        }
+      },
+    }),
+    CredentialsProvider({
+      id: "signup",
+      name: "Credentials",
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
+        email: { label: "Email", type: "email" },
+      },
+      authorize: async (credentials) => {
+        if (!credentials) {
+          return null;
+        }
+        const user = await db.credentials.findFirst({
+          where: {
+            username: credentials.username,
+          },
+        });
+        if (user) {
+          throw new Error("Username already exists");
+        }
+        const hashedPassword = await bcrypt.hash(credentials.password, 10);
+        const newUser = await db.credentials.create({
+          data: {
+            username: credentials.username,
+            password: hashedPassword,
+            user: {
+              connectOrCreate: {
+                where: {
+                  email: credentials.email,
+                },
+                create: {
+                  email: credentials.email,
+                },
+              },
+            },
+          },
+        });
+        return { id: newUser.id, username: newUser.username };
+      },
+    }),
     EmailProvider({
       server: {
         host: process.env.EMAIL_SERVER_HOST,

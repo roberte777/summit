@@ -1,3 +1,4 @@
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -69,7 +70,12 @@ export default function Signin() {
               <p className="text-xs text-gray-500">or</p>
               <div className="h-px w-full bg-gray-300" />
             </div>
-            <button className="flex justify-center gap-3 rounded-lg border border-gray-300 p-2 text-sm font-semibold hover:border-gray-400">
+            <button
+              className="flex justify-center gap-3 rounded-lg border border-gray-300 p-2 text-sm font-semibold hover:border-gray-400"
+              onClick={() =>
+                signIn("google", { redirect: true, callbackUrl: "/" })
+              }
+            >
               <Image
                 src="/svgs/Google.svg"
                 alt="Google Logo"
@@ -164,7 +170,12 @@ export default function Signin() {
               <p className="text-xs text-gray-500">or</p>
               <div className="h-px w-full bg-gray-300" />
             </div>
-            <button className="flex justify-center gap-3 rounded-lg border border-gray-300 p-2 text-sm font-semibold hover:border-gray-400">
+            <button
+              className="flex justify-center gap-3 rounded-lg border border-gray-300 p-2 text-sm font-semibold hover:border-gray-400"
+              onClick={() =>
+                signIn("google", { redirect: true, callbackUrl: "/" })
+              }
+            >
               <Image
                 src="/svgs/Google.svg"
                 alt="Google Logo"
@@ -205,7 +216,7 @@ export default function Signin() {
         )}
         <div className="flex w-full flex-col justify-between">
           <div className="flex w-full justify-end">
-            <button className="flex items-center gap-1 font-semibold underline-offset-4 hover:underline">
+            <button className="flex items-center gap-1 text-sm font-semibold underline-offset-4 hover:underline">
               <ChevronLeft className="h-6 w-6 rounded-full bg-summit-700/20 p-1" />
               Back to home
             </button>

@@ -5,6 +5,7 @@ import { useState } from "react";
 import TextField from "~/components/TextField";
 import { ArrowRight, ChevronLeft } from "~/svgs";
 import classNames from "~/utils/classNames";
+import LoginCarousel from "~/components/LoginCarousel";
 
 export default function Signin() {
   const [username, setUsername] = useState("");
@@ -17,7 +18,7 @@ export default function Signin() {
 
   return (
     <>
-      <div className="flex min-h-screen gap-8 bg-summit-100 px-12 py-12 font-sans">
+      <div className="flex min-h-screen gap-8 bg-summit-100 px-8 py-6 font-sans">
         {!registering ? (
           <div className="flex flex-col gap-8 rounded-lg bg-white px-12 pb-8 pt-24">
             <div className="flex flex-col gap-6">
@@ -198,20 +199,6 @@ export default function Signin() {
               <span className="text-summit-700">Sign in</span>
               <ArrowRight className="mt-[2px] h-3 w-3 text-summit-700" />
             </button>
-            <div className="text-center text-xs text-gray-500">
-              By creating an account, you confirm our{" "}
-              <span className="text-summit-700 underline-offset-4 hover:underline">
-                <Link href="/" target="_blank">
-                  Terms of Use
-                </Link>
-              </span>{" "}
-              and{" "}
-              <span className="text-summit-700 underline-offset-4 hover:underline">
-                <Link href="/" target="_blank">
-                  Privacy Policy
-                </Link>
-              </span>
-            </div>
           </div>
         )}
         <div className="flex w-full flex-col justify-between">
@@ -221,7 +208,7 @@ export default function Signin() {
               Back to home
             </button>
           </div>
-          {/* carousel of 3 images that change every 2 seconds */}
+          <LoginCarousel />
         </div>
       </div>
     </>

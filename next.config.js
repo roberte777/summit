@@ -17,6 +17,16 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  webpack: (
+    /** @type {{ module: { rules: { test: RegExp; use: string[]; }[]; }; }} */ config,
+  ) => {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+
+    return config;
+  },
 };
 
 export default config;

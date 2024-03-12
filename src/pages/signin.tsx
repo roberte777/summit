@@ -217,7 +217,7 @@ export default function Signin() {
                   redirect: false,
                 }).then((res) => {
                   if (res?.ok) {
-                    void router.push("/");
+                    void router.push("/dashboard");
                   } else {
                     if (res?.error) {
                       setSignInError(

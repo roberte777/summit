@@ -6,6 +6,16 @@ import Link from "next/link";
 import navigationConfig from "~/constants/navigationConfig";
 import NavLink from "./NavLink";
 import Combobox, { type ComboboxItem } from "./shadcn/ui/combobox";
+import { Avatar, AvatarFallback, AvatarImage } from "./shadcn/ui/avatar";
+import { signOut, useSession } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./shadcn/ui/dropdown-menu";
+import { LogOut, User } from "lucide-react";
 
 const FakeOrganizations: ComboboxItem[] = [
   { value: "1", label: "Organization 1" },
@@ -18,6 +28,8 @@ const nonLayoutPages = ["/", "/signin"];
 
 export default function LayoutProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const { data } = useSession();
+  const [avatarOpen, setAvatarOpen] = useState(false);
 
   const [selectedOrganizationId, setSelectedOrganizationId] =
     useState<string>("");
@@ -39,21 +51,46 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
             priority
           />
         </Link>
-        <div className="flex items-center gap-8">
-          {/* TODO: FIGURE OUT WHY THIS ISN'T WORKING
-            {data?.user.image ?? (
-            <Image
-              src={data?.user.image ?? "/logos/SimpleTeal.svg"}
-              alt="User profile picture"
-              height={48}
-              width={48}
-              referrerPolicy="no-referrer"
-            />
-          )} */}
+        <div className="flex items-center gap-4">
           <button className="rounded-full p-2 hover:bg-summit-700/5">
             <Bell className=" h-6 w-6 text-summit-700" />
           </button>
-          <div className="h-12 w-12 rounded-full bg-gray-200" />
+          <DropdownMenu open={avatarOpen} onOpenChange={setAvatarOpen}>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="rounded-full"
+                onMouseOver={() => setAvatarOpen(true)}
+              >
+                <Avatar>
+                  <AvatarImage src={data?.user.image ?? ""} />
+                  <AvatarFallback>
+                    {data?.user?.name
+                      ?.split(" ")
+                      .map((name) => name[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-56"
+              onMouseOver={() => setAvatarOpen(true)}
+              onMouseLeave={() => setAvatarOpen(false)}
+            >
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4 text-summit-700" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
+                >
+                  <LogOut className="mr-2 h-4 w-4 text-summit-700" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       <div className="flex h-full flex-grow gap-4 p-4">

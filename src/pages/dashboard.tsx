@@ -44,6 +44,7 @@ export default function Dashboard() {
             Upcoming Events
           </h3>
         </div>
+        {JSON.stringify(data?.user, null, 2)}
       </div>
     </>
   );

@@ -7,6 +7,7 @@ import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
 import { Toaster } from "~/components/shadcn/ui/toaster";
+import LayoutProvider from "~/components/LayoutProvider";
 
 const notoSans = Noto_Sans({
   subsets: ["latin"],
@@ -21,8 +22,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <main className={`${notoSans.variable}`}>
       <SessionProvider session={session}>
-        <Component {...pageProps} />
-        <Toaster />
+        <LayoutProvider>
+          <Component {...pageProps} />
+          <Toaster />
+        </LayoutProvider>
       </SessionProvider>
     </main>
   );

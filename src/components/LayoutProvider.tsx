@@ -89,7 +89,7 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
               ))}
           </div>
         </nav>
-        <div>{children}</div>
+        {children}
       </div>
     </div>
   );

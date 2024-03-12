@@ -10,4 +10,13 @@ export const userRouter = createTRPCRouter({
         where: { email: { equals: input.email } },
       });
     }),
+
+  getUser: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.db.user.findFirst({
+        where: { id: input.id },
+        include: { credentials: { select: { username: true } } },
+      });
+    }),
 });

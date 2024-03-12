@@ -78,10 +78,12 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
               onMouseLeave={() => setAvatarOpen(false)}
             >
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4 text-summit-700" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
+                <Link href="/profile">
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4 text-summit-700" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem
                   onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
                 >

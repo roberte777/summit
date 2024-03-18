@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { formatPhoneNumber } from "react-phone-number-input";
 import {
   Avatar,
   AvatarFallback,
@@ -8,7 +9,6 @@ import {
 } from "~/components/shadcn/ui/avatar";
 import { Skeleton } from "~/components/shadcn/ui/skeleton";
 import { api } from "~/utils/api";
-import { formatPhoneNumber } from "~/utils/formats";
 
 export default function Profile() {
   const router = useRouter();
@@ -39,9 +39,9 @@ export default function Profile() {
   if (userData.data) {
     return (
       <>
-        <div className="flex flex-grow flex-col gap-4 rounded-md border border-gray-300 bg-white px-8 py-4">
+        <div className="flex w-full flex-grow flex-col gap-4 rounded-md border border-gray-300 bg-white px-8 py-4">
           <div className="flex flex-col items-center gap-4 border-b border-gray-300 pb-4">
-            <Avatar className="h-36 w-36">
+            <Avatar className="h-24 w-24 sm:h-36 sm:w-36">
               <AvatarImage
                 src={
                   enhancedImage === "" ? data.user.image ?? "" : enhancedImage
@@ -54,47 +54,60 @@ export default function Profile() {
                   .join("")}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center">
               <h1 className="text-xl font-semibold">{data?.user?.name}</h1>
               <h2 className="text-gray-500">{`@${userData.data.credentials?.username.toLowerCase()}`}</h2>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <div>{userData.data.academicYear}</div>
-                <div className="h-0.5 w-0.5 rounded-full bg-gray-500" />
-                <div>{userData.data.academicMajor}</div>
-                <div className="h-0.5 w-0.5 rounded-full bg-gray-500" />
-                <div>{userData.data.academicUniversity}</div>
-                <div className="h-0.5 w-0.5 rounded-full bg-gray-500" />
-                <div>{userData.data?.city + "," + userData.data?.state}</div>
-              </div>
             </div>
-            <button className="filled-button text-sm">Edit profile</button>
+            <button className="filled-button w-full text-sm sm:w-max">
+              Edit profile
+            </button>
           </div>
-          <div className="flex items-center justify-center gap-8 py-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div>Email:</div>
-              <div className="text-gray-500">{userData.data.email}</div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div>Phone:</div>
-              <div className="text-gray-500">
-                {formatPhoneNumber(
-                  userData.data.phone ? userData.data.phone : "",
-                )}
+          <div className="flex flex-col gap-6 lg:flex-row">
+            <div className="flex w-full flex-col gap-4">
+              <h3 className="font-semibold">Personal Information</h3>
+              <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+                <div className="text-gray-500">Email</div>
+                <div>{userData.data.email}</div>
+              </div>
+              <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+                <div className="text-gray-500">Phone number</div>
+                <div>
+                  {formatPhoneNumber(
+                    userData.data.phone ? userData.data.phone : "",
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+                <div className="text-gray-500">Birthday</div>
+                <div>
+                  {userData.data.birthday?.toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </div>
+              </div>
+              <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+                <div className="text-gray-500">Location</div>
+                <div>{userData.data?.city + ", " + userData.data?.state}</div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div>Birthday:</div>
-              <div className="text-gray-500">
-                {userData.data.birthday?.toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                })}
+            <div className="flex w-full flex-col gap-4">
+              <h3 className="font-semibold">Education Information</h3>
+              <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+                <div className="text-gray-500">University</div>
+                <div>{userData.data.academicUniversity}</div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div>Graduation Year:</div>
-              <div className="text-gray-500">
-                {userData.data.graduationYear}
+              <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+                <div className="text-gray-500">Major</div>
+                <div>{userData.data.academicMajor}</div>
+              </div>
+              <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+                <div className="text-gray-500">Year</div>
+                <div>{userData.data.academicYear}</div>
+              </div>
+              <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+                <div className="text-gray-500">Graduation year</div>
+                <div>{userData.data.graduationYear}</div>
               </div>
             </div>
           </div>
@@ -107,7 +120,7 @@ export default function Profile() {
     <>
       <div className="flex flex-grow flex-col gap-4 rounded-md border border-gray-300 bg-white px-8 py-4">
         <div className="flex flex-col items-center gap-4 border-b border-gray-300 pb-4">
-          <Avatar className="h-36 w-36">
+          <Avatar className="h-24 w-24 sm:h-36 sm:w-36">
             <AvatarImage
               src={enhancedImage === "" ? data.user.image ?? "" : enhancedImage}
             />
@@ -121,23 +134,48 @@ export default function Profile() {
           <div className="flex flex-col items-center gap-2">
             <h1 className="text-xl font-semibold">{data?.user?.name}</h1>
             <Skeleton className="h-4 w-56" />
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Skeleton className="h-4 w-32" />
-              <div className="h-0.5 w-0.5 rounded-full bg-gray-500" />
-              <Skeleton className="h-4 w-32" />
-              <div className="h-0.5 w-0.5 rounded-full bg-gray-500" />
-              <Skeleton className="h-4 w-32" />
-              <div className="h-0.5 w-0.5 rounded-full bg-gray-500" />
-              <Skeleton className="h-4 w-32" />
-            </div>
           </div>
           <button className="filled-button text-sm">Edit profile</button>
         </div>
-        <div className="flex items-center justify-center gap-8 py-4 text-sm">
-          <Skeleton className="h-4 w-56" />
-          <Skeleton className="h-4 w-56" />
-          <Skeleton className="h-4 w-56" />
-          <Skeleton className="h-4 w-56" />
+        <div className="flex flex-col gap-6 lg:flex-row">
+          <div className="flex w-full flex-col gap-4">
+            <h3 className="font-semibold">Personal Information</h3>
+            <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+              <div className="text-gray-500">Email</div>
+              <Skeleton className="h-4 w-56" />
+            </div>
+            <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+              <div className="text-gray-500">Phone number</div>
+              <Skeleton className="h-4 w-56" />
+            </div>
+            <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+              <div className="text-gray-500">Birthday</div>
+              <Skeleton className="h-4 w-56" />
+            </div>
+            <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+              <div className="text-gray-500">Location</div>
+              <Skeleton className="h-4 w-56" />
+            </div>
+          </div>
+          <div className="flex w-full flex-col gap-4">
+            <h3 className="font-semibold">Education Information</h3>
+            <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+              <div className="text-gray-500">University</div>
+              <Skeleton className="h-4 w-56" />
+            </div>
+            <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+              <div className="text-gray-500">Major</div>
+              <Skeleton className="h-4 w-56" />
+            </div>
+            <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+              <div className="text-gray-500">Year</div>
+              <Skeleton className="h-4 w-56" />
+            </div>
+            <div className="flex flex-col justify-between mobile-md:flex-row mobile-md:items-center">
+              <div className="text-gray-500">Graduation year</div>
+              <Skeleton className="h-4 w-56" />
+            </div>
+          </div>
         </div>
       </div>
     </>

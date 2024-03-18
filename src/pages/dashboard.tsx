@@ -23,8 +23,8 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="flex flex-grow flex-col gap-4 rounded-md border border-gray-300 bg-white px-8 py-4">
-        <div className="flex items-center gap-4 border-b border-gray-300 pb-4">
+      <div className="flex w-full flex-grow flex-col gap-4 rounded-md border border-gray-300 bg-white px-8 py-4">
+        <div className="flex flex-col gap-4 border-b border-gray-300 pb-4 sm:flex-row sm:items-center">
           <TextField
             input={organizationJoinCode}
             setInput={setOrganizationJoinCode}
@@ -44,7 +44,6 @@ export default function Dashboard() {
             Upcoming Events
           </h3>
         </div>
-        {JSON.stringify(data?.user, null, 2)}
       </div>
     </>
   );

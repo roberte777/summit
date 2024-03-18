@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import type { navigationLink } from "~/constants/navigationConfig";
 import classNames from "~/utils/classNames";
 
@@ -12,9 +12,11 @@ function checkIsActive(path: string, asPath: string) {
 export default function NavLink({
   navigationLink,
   organizationId,
+  setMobileNavOpen,
 }: {
   navigationLink: navigationLink;
   organizationId?: string;
+  setMobileNavOpen?: Dispatch<SetStateAction<boolean>>;
 }) {
   const { asPath } = useRouter();
   const [isActive, setIsActive] = useState(
@@ -48,6 +50,11 @@ export default function NavLink({
               ? "bg-summit-700/10 text-summit-700"
               : "bg-white text-gray-500 hover:bg-gray-100",
         )}
+        onClick={() => {
+          if (setMobileNavOpen) {
+            setMobileNavOpen(false);
+          }
+        }}
       >
         {isActive ? navigationLink.filledIcon : navigationLink.icon}
         <div>{navigationLink.title}</div>

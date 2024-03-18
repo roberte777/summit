@@ -42,6 +42,8 @@ import { useToast } from "../shadcn/ui/use-toast";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 
 export const onboardingFormSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
   academicYear: AcademicYearOptions,
   academicMajor: z.string().min(1),
   academicUniversity: z.string().min(1),
@@ -93,6 +95,34 @@ export function OnboardingForm({
       >
         <div className="flex w-full flex-col gap-4">
           <FormLabel className="text-base">Personal Information</FormLabel>
+          <div className="flex w-full flex-col items-center gap-4 sm:flex-row">
+            <FormField
+              disabled={isLoading}
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>First name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              disabled={isLoading}
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Last name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             disabled={isLoading}
             control={form.control}
@@ -106,7 +136,7 @@ export function OnboardingForm({
               </FormItem>
             )}
           />
-          <div className="flex w-full items-center gap-4">
+          <div className="flex w-full items-center gap-4 ">
             <FormField
               disabled={isLoading}
               control={form.control}
@@ -186,7 +216,7 @@ export function OnboardingForm({
             control={form.control}
             name="birthday"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem className="flex w-full flex-col">
                 <FormLabel>Date of birth</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -194,7 +224,7 @@ export function OnboardingForm({
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
+                          "w-full pl-3 text-left font-normal sm:w-[240px]",
                           !field.value && "text-muted-foreground",
                         )}
                       >

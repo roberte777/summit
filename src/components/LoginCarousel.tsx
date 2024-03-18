@@ -56,7 +56,7 @@ export default function LoginCarousel() {
       >
         <CarouselContent>
           {illustrations.map((illustration, index) => (
-            <CarouselItem key={index} className="justify-center">
+            <CarouselItem key={index} className="-ml-6 justify-center xl:ml-0">
               {illustration}
             </CarouselItem>
           ))}

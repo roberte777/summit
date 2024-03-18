@@ -34,7 +34,7 @@ export default function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-56 justify-between"
+          className="w-full justify-between"
         >
           {value
             ? items.find((item) => item.value === value)?.label
@@ -42,7 +42,7 @@ export default function Combobox({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-56 p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput placeholder={`Search ${itemName}...`} />
           <CommandEmpty>{`No ${itemName} found.`}</CommandEmpty>

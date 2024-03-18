@@ -36,6 +36,10 @@ export const userRouter = createTRPCRouter({
       return ctx.db.user.update({
         where: { id: input.id },
         data: {
+          name:
+            input.onboardingData.firstName +
+            " " +
+            input.onboardingData.lastName,
           academicYear: input.onboardingData.academicYear,
           academicMajor: input.onboardingData.academicMajor,
           academicUniversity: input.onboardingData.academicUniversity,

@@ -165,9 +165,9 @@ export default function Signin() {
 
   return (
     <>
-      <div className="flex min-h-screen gap-8 bg-summit-100 px-8 py-6 font-sans">
+      <div className="flex min-h-screen gap-8 bg-summit-100 font-sans sm:justify-center sm:px-8 sm:py-6 lg:justify-start">
         {!registering ? (
-          <div className="flex flex-col gap-8 rounded-lg bg-white px-12 pb-8 pt-12">
+          <div className="flex w-full flex-col gap-8 bg-white px-12 pb-8 pt-12 sm:w-max sm:rounded-lg">
             <div className="flex flex-col gap-6">
               <Image
                 src="/logos/HorizontalTealEdited.svg"
@@ -184,14 +184,14 @@ export default function Signin() {
                 input={username}
                 setInput={setUsername}
                 label={"Username"}
-                className="w-72"
+                className="w-full sm:w-72"
               />
               <div className="flex flex-col items-end gap-1">
                 <TextField
                   input={password}
                   setInput={setPassword}
                   label={"Password"}
-                  className="w-72"
+                  className="w-full sm:w-72"
                   password
                 />
                 <Link
@@ -264,7 +264,7 @@ export default function Signin() {
             </button>
           </div>
         ) : (
-          <div className="flex flex-col gap-8 rounded-lg bg-white px-12 pb-8 pt-12">
+          <div className="flex w-full flex-col gap-8 bg-white px-12 pb-8 pt-12 sm:w-max sm:rounded-lg">
             <div className="flex flex-col gap-6">
               <Image
                 src="/logos/HorizontalTealEdited.svg"
@@ -284,7 +284,7 @@ export default function Signin() {
                 isValid={validEmail}
                 errorMessage={emailErrorMessage}
                 validate
-                className="w-72"
+                className="w-full sm:w-72"
               />
               <TextField
                 input={newUsername}
@@ -293,20 +293,20 @@ export default function Signin() {
                 errorMessage={newUsernameErrorMessage}
                 validate
                 label={"Username"}
-                className="w-72"
+                className="w-full sm:w-72"
               />
               <TextField
                 input={newPassword}
                 setInput={setNewPassword}
                 label={"Password"}
-                className="w-72"
+                className="w-full sm:w-72"
                 password
               />
               <TextField
                 input={confirmPassword}
                 setInput={setConfirmPassword}
                 label={"Confirm Password"}
-                className="w-72"
+                className="w-full sm:w-72"
                 password
               />
               <div className="flex justify-center">
@@ -461,7 +461,7 @@ export default function Signin() {
             </button>
           </div>
         )}
-        <div className="flex w-full flex-col justify-between">
+        <div className="hidden w-full flex-col justify-between lg:flex">
           <div className="flex w-full justify-end">
             <button className="flex items-center gap-1 text-sm font-semibold underline-offset-4 hover:underline">
               <ChevronLeft className="h-6 w-6 rounded-full bg-summit-700/20 p-1" />

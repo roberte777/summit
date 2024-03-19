@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -42,7 +43,7 @@ import { useToast } from "../shadcn/ui/use-toast";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
 
 export const onboardingFormSchema = z.object({
-  firstName: z.string().min(1),
+  firstName: z.string().min(1, { message: "First name is required" }),
   lastName: z.string().min(1),
   academicYear: AcademicYearOptions,
   academicMajor: z.string().min(1),
@@ -64,6 +65,8 @@ export function OnboardingForm({
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
     resolver: zodResolver(onboardingFormSchema),
   });
+
+  const [date, setDate] = useState<Date>();
 
   const { mutate, error, isLoading, status } =
     api.user.updateUserOnboarding.useMutation();
@@ -157,7 +160,7 @@ export function OnboardingForm({
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormLabel>State</FormLabel>
-                  <Popover>
+                  <Popover key={date?.getDate()}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -165,7 +168,8 @@ export function OnboardingForm({
                           role="combobox"
                           className={cn(
                             "w-full justify-between",
-                            !field.value && "text-muted-foreground font-normal",
+                            !field.value &&
+                              "text-muted-foreground  font-normal",
                           )}
                         >
                           {field.value
@@ -173,7 +177,7 @@ export function OnboardingForm({
                                 (state) => state === field.value,
                               )
                             : "Select state"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0  opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -218,7 +222,7 @@ export function OnboardingForm({
             render={({ field }) => (
               <FormItem className="flex w-full flex-col">
                 <FormLabel>Date of birth</FormLabel>
-                <Popover>
+                <Popover key={date?.getDate()}>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -243,12 +247,11 @@ export function OnboardingForm({
                   >
                     <Calendar
                       mode="single"
+                      captionLayout="dropdown-buttons"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
+                      fromYear={1900}
+                      toYear={new Date().getFullYear()}
                     />
                   </PopoverContent>
                 </Popover>

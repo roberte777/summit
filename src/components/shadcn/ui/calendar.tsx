@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker, DropdownProps } from "react-day-picker";
+import { DayPicker, type DropdownProps } from "react-day-picker";
 import {
   Select,
   SelectContent,
@@ -28,18 +28,19 @@ function Calendar({
       classNames={{
         months: "flex sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        caption: "flex flex-row justify-center p-0 relative items-center p-0",
-        caption_dropdowns: "flex flex-row space-x-2",
+        caption:
+          "flex flex-row justify-center p-0 relative items-center p-0 gap-2",
+        caption_dropdowns: "flex flex-row gap-1",
         caption_label: "text-sm font-medium",
-        nav: "space-x-1 flex flex-row items-center",
+        nav: "flex flex-row items-center gap-1 w-full justify-end",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          "h-[30px] w-[30px] bg-transparent p-0 opacity-50 hover:opacity-100",
         ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
+        nav_button_previous: "left-0",
+        nav_button_next: "right-0",
         table: "w-full border-collapse space-y-1",
-        head_row: "flex ",
+        head_row: "flex w-full",
         head_cell:
           "text-gray-500 rounded-md w-9 font-normal text-[0.8rem] dark:text-gray-400",
         row: "flex w-full mt-2",
@@ -87,7 +88,7 @@ function Calendar({
                 <ScrollArea className="h-80">
                   {options.map((option, id: number) => (
                     <SelectItem
-                      key={`${option.props.value}-${id}`}
+                      key={`${option.props.value?.toString()}-${id}`}
                       value={option.props.value?.toString() ?? ""}
                     >
                       {option.props.children}

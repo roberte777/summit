@@ -66,7 +66,7 @@ export function OnboardingForm({
     resolver: zodResolver(onboardingFormSchema),
   });
 
-  const [date, setDate] = useState<Date>();
+  const [date] = useState<Date>();
 
   const { mutate, error, isLoading, status } =
     api.user.updateUserOnboarding.useMutation();

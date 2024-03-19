@@ -3,9 +3,5 @@
 @tailwind utilities;
 
 .filled-button {
-  @apply rounded-md bg-summit-700 px-4 py-2 text-center text-white hover:bg-summit-700/95;
-}
-
-.rdp-vhidden {
-  @apply hidden;
+    @apply bg-summit-700 hover:bg-summit-700/95 rounded-md text-white text-center px-4 py-2;
 }

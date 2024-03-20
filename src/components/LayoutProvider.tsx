@@ -159,7 +159,7 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
                   <NavLink key={link.link} navigationLink={link} />
                 ))}
               <Link
-                href="/"
+                href="/organization/create"
                 className="min-w-56 rounded-md bg-summit-700 px-4 py-2 text-center font-semibold text-white hover:bg-summit-700/95"
               >
                 Create Organization

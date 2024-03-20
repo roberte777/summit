@@ -48,14 +48,14 @@ export default function Profile() {
                 }
               />
               <AvatarFallback>
-                {data?.user?.name
+                {userData.data.name
                   ?.split(" ")
                   .map((name) => name[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-center">
-              <h1 className="text-xl font-semibold">{data?.user?.name}</h1>
+              <h1 className="text-xl font-semibold">{userData.data.name}</h1>
               <h2 className="text-gray-500">{`@${userData.data.credentials?.username.toLowerCase()}`}</h2>
             </div>
             <button className="filled-button w-full text-sm sm:w-max">

@@ -5,3 +5,8 @@
 .filled-button {
     @apply bg-summit-700 hover:bg-summit-700/95 rounded-md text-white text-center px-4 py-2;
 }
+
+.popover-content-width-same-as-its-trigger {
+    width: "var(--radix-popover-trigger-width)";
+    max-height: "var(--radix-popover-content-available-height)";
+ }

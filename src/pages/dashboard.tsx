@@ -7,7 +7,7 @@ export default function Dashboard() {
   const router = useRouter();
 
   // Checks if the user is authenticated, if not, redirects to the signin page
-  const { status, data } = useSession({
+  const { status } = useSession({
     required: true,
     onUnauthenticated() {
       void router.push("/api/auth/signin");
@@ -23,7 +23,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="flex w-full flex-grow flex-col gap-4 rounded-md border border-gray-300 bg-white px-8 py-4">
+      <div className="flex w-full flex-grow flex-col gap-4">
         <div className="flex flex-col gap-4 border-b border-gray-300 pb-4 sm:flex-row sm:items-center">
           <TextField
             input={organizationJoinCode}

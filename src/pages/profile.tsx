@@ -39,7 +39,7 @@ export default function Profile() {
   if (userData.data) {
     return (
       <>
-        <div className="flex w-full flex-grow flex-col gap-4 rounded-md border border-gray-300 bg-white px-8 py-4">
+        <div className="flex w-full flex-grow flex-col gap-4 p-4 sm:p-0">
           <div className="flex flex-col items-center gap-4 border-b border-gray-300 pb-4">
             <Avatar className="h-24 w-24 sm:h-36 sm:w-36">
               <AvatarImage

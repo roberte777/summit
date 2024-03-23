@@ -14,11 +14,13 @@ export default function OrganizationCreate() {
 
   return (
     <>
-      <div className="flex w-full flex-grow flex-col gap-4 rounded-md border border-gray-300 bg-white px-8 py-4">
-        <h3 className="text-2xl font-semibold text-summit-700">
+      <div className="flex h-full w-full flex-grow flex-col gap-4">
+        <h3 className="py-4 text-2xl font-semibold text-summit-700">
           Create an Organization
         </h3>
-        {data?.user.id && <CreateOrganizationForm userId={data.user.id} />}
+        <div className="w-full overflow-auto">
+          {data?.user.id && <CreateOrganizationForm userId={data.user.id} />}
+        </div>
       </div>
     </>
   );

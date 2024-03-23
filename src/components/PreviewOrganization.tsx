@@ -1,4 +1,5 @@
 import { EyeSlash, PinFilled, SchoolFilled } from "~/svgs";
+import Image from "next/image";
 
 export default function PreviewOrganization({
   name,
@@ -8,6 +9,8 @@ export default function PreviewOrganization({
   state,
   description,
   isPrivate,
+  logoUrl,
+  backgroundUrl,
 }: {
   name: string;
   username: string;
@@ -16,13 +19,35 @@ export default function PreviewOrganization({
   state: string;
   description: string;
   isPrivate: boolean;
+  logoUrl: string;
+  backgroundUrl: string;
 }) {
-  console.log("state", state);
   return (
     <>
       <div className="relative flex w-full flex-col rounded-lg border border-gray-200">
-        <div className="h-32 w-full rounded-t-lg bg-gray-200" />
-        <div className="absolute left-8 top-16 h-32 w-32 rounded-lg bg-gray-400" />
+        {backgroundUrl === "" ? (
+          <div className="h-32 w-full rounded-t-lg bg-gray-200" />
+        ) : (
+          <div className="relative h-32 w-full rounded-t-lg">
+            <Image
+              src={backgroundUrl}
+              alt="Uploaded background"
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+        )}
+        {logoUrl === "" ? (
+          <div className="absolute left-8 top-16 h-32 w-32 rounded-lg bg-gray-400" />
+        ) : (
+          <Image
+            src={logoUrl}
+            alt="Uploaded logo"
+            width={128}
+            height={128}
+            className="absolute left-8 top-16 rounded-lg border-2 border-white"
+          />
+        )}
         <div className="flex w-full flex-col gap-4 px-8 pb-4 pt-20">
           <div className="flex w-full flex-col gap-4 border-b border-gray-200 pb-4">
             <div className="flex flex-col gap-1">
@@ -72,9 +97,6 @@ export default function PreviewOrganization({
                     ? "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                     : description}
                 </div>
-              </div>
-              <div className="flex w-full flex-col gap-2">
-                <div className="font-semibold">Contact Info</div>
               </div>
             </>
           )}

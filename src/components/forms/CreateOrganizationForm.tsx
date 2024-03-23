@@ -17,7 +17,7 @@ import {
 } from "../shadcn/ui/form";
 import { Input } from "../shadcn/ui/input";
 import { Button } from "../shadcn/ui/button";
-import { AtSign, Check, ChevronsUpDown } from "lucide-react";
+import { AtSign, Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
 import { CardCheckbox } from "../custom/ui/cardCheckbox";
 import { StateOptions } from "~/constants/formValues";
 import { Popover, PopoverContent, PopoverTrigger } from "../shadcn/ui/popover";
@@ -33,7 +33,9 @@ import {
 import { AdvancedTextArea } from "../custom/ui/advancedTextarea";
 import { Photo } from "~/svgs";
 import PreviewOrganization from "../PreviewOrganization";
-import { set } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
+import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 export const createOrganizationFormSchema = z.object({
   name: z
@@ -49,7 +51,7 @@ export const createOrganizationFormSchema = z.object({
   public: z.boolean(),
   private: z.boolean(),
   university: z.string().min(1, { message: "Required field" }),
-  addressLine1: z.string().min(1, { message: "Required field" }),
+  addressLine1: z.string(),
   addressLine2: z.string(),
   city: z.string().min(1, { message: "Required field" }),
   state: StateOptions,
@@ -74,6 +76,7 @@ export const createOrganizationFormSchema = z.object({
 });
 
 export function CreateOrganizationForm({ userId }: { userId: string }) {
+  const router = useRouter();
   const form = useForm<z.infer<typeof createOrganizationFormSchema>>({
     resolver: zodResolver(createOrganizationFormSchema),
     defaultValues: {
@@ -90,23 +93,37 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
       joinCode: "",
     },
   });
-  const [files, setFiles] = useState<File[]>([]);
-  const [filePreviewPaths, setFilePreviewPaths] = useState<string[]>([]);
+  const [logoFile, setLogoFile] = useState<File>();
+  const [logoPreviewPath, setLogoPreviewPath] = useState<string>("");
+  const [backgroundFile, setBackgroundFile] = useState<File>();
+  const [backgroundPreviewPath, setBackgroundPreviewPath] =
+    useState<string>("");
   const { startUpload, permittedFileInfo } = useUploadThing(
     "profileOrgBannerImageUploader",
   );
   const fileTypes = permittedFileInfo?.config
     ? Object.keys(permittedFileInfo?.config)
     : [];
-  const { getInputProps, getRootProps } = useDropzone({
+  const logoDropzone = useDropzone({
     onDrop: useCallback(
       (acceptedFiles) => {
-        setFiles(acceptedFiles);
-        setFilePreviewPaths(
-          acceptedFiles.map((file) => URL.createObjectURL(file)),
-        );
+        if (acceptedFiles.length === 0) return;
+        setLogoFile(acceptedFiles[0]);
+        setLogoPreviewPath(URL.createObjectURL(acceptedFiles[0] as Blob));
       },
-      [setFilePreviewPaths],
+      [setLogoPreviewPath],
+    ),
+    accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
+  });
+
+  const backgroundDropzone = useDropzone({
+    onDrop: useCallback(
+      (acceptedFiles) => {
+        if (acceptedFiles.length === 0) return;
+        setBackgroundFile(acceptedFiles[0]);
+        setBackgroundPreviewPath(URL.createObjectURL(acceptedFiles[0] as Blob));
+      },
+      [setBackgroundPreviewPath],
     ),
     accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
   });
@@ -114,6 +131,9 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
 
   const publicValue = form.watch("public");
   const privateValue = form.watch("private");
+
+  const { mutate, error, isLoading, status } =
+    api.organization.createOrganization.useMutation();
 
   useEffect(() => {
     if (publicValue) form.setValue("private", false);
@@ -127,22 +147,88 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
     values: z.infer<typeof createOrganizationFormSchema>,
   ) => {
     console.log("CreateOrganizationForm values: ", values);
+    const fileData = {
+      logoUrl: "",
+      logoKey: "",
+      bannerUrl: "",
+      bannerKey: "",
+    };
 
-    if (files.length != 0) {
-      const organizationProfilePictureRes = await startUpload(files);
+    if (logoFile) {
+      const newFileName =
+        uuidv4().toString() + "." + logoFile.name.split(".").pop();
+      const logoToUpload = new File([logoFile], newFileName, {
+        type: logoFile.type,
+      });
+      const organizationProfilePictureRes = await startUpload([logoToUpload]);
+      console.log(
+        "organizationProfilePictureRes: ",
+        organizationProfilePictureRes,
+      );
 
       if (!organizationProfilePictureRes) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to upload organization profile picture.",
+          description: "Failed to upload organization logo.",
         });
         return;
+      } else {
+        if (organizationProfilePictureRes[0]) {
+          fileData.logoUrl = organizationProfilePictureRes[0].url;
+          fileData.logoKey = organizationProfilePictureRes[0].key;
+        }
       }
     }
+    if (backgroundFile) {
+      const newFileName =
+        uuidv4().toString() + "." + backgroundFile.name.split(".").pop();
+      const backgroundToUpload = new File([backgroundFile], newFileName, {
+        type: backgroundFile.type,
+      });
+      const organizationBannerPictureRes = await startUpload([
+        backgroundToUpload,
+      ]);
+      console.log(
+        "organizationBannerPictureRes: ",
+        organizationBannerPictureRes,
+      );
+
+      if (!organizationBannerPictureRes) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to upload organization background image.",
+        });
+        return;
+      } else {
+        if (organizationBannerPictureRes[0]) {
+          fileData.bannerUrl = organizationBannerPictureRes[0].url;
+          fileData.bannerKey = organizationBannerPictureRes[0].key;
+        }
+      }
+    }
+
+    mutate({ userId: userId, organizationData: values, fileData: fileData });
   };
 
-  console.log("Files: ", files);
+  useEffect(() => {
+    if (status === "success") {
+      toast({
+        variant: "default",
+        title: "Organization created",
+        description: "Your organization has been created successfully.",
+      });
+      void router.push("/dashboard");
+    }
+    if (status === "error") {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error?.message ?? "Failed to create organization.",
+      });
+    }
+  }, [status, error, toast, router]);
 
   return (
     <>
@@ -150,7 +236,7 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
+            className="flex w-3/4 flex-col gap-4"
           >
             <FormField
               control={form.control}
@@ -185,41 +271,44 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
                 </FormItem>
               )}
             />
-            <div className="flex items-center gap-2">
-              <FormField
-                control={form.control}
-                name="public"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <CardCheckbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        label="Public"
-                        description="Anyone can join and see the organization's content."
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="private"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <CardCheckbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        label="Private"
-                        description="Only members can see the organization's content."
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="flex flex-col gap-3">
+              <FormLabel>Privacy</FormLabel>
+              <div className="flex flex-col gap-2">
+                <FormField
+                  control={form.control}
+                  name="public"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <CardCheckbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          label="Public"
+                          description="Anyone can join and see the organization's content."
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="private"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <CardCheckbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          label="Private"
+                          description="Only members can see the organization's content."
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
             <FormField
               control={form.control}
@@ -380,39 +469,105 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
                 </FormItem>
               )}
             />
-            <FormLabel>Logo</FormLabel>
-            <div
-              {...getRootProps()}
-              className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-6 text-center"
-            >
-              {files.length > 0 ? <div>{files[0]?.name}</div> : null}
-              <input className="sr-only" {...getInputProps()} />
-              <Photo className="h-10 w-10 text-gray-400" />
-              <div>
-                <p className="text-sm">Upload a file or drag and drop</p>
-                <p className="text-xs text-gray-500">
-                  PNG, JPG, WEBP. Max 2MB.
-                </p>
-              </div>
+            <div className="flex flex-col gap-3">
+              <FormLabel>Logo</FormLabel>
+              {logoFile ? (
+                <div className="flex w-full items-center justify-between rounded-lg border border-dashed border-gray-900/25 px-2 py-2">
+                  <div className="flex flex-col gap-1">
+                    <div className="text-sm font-medium">{logoFile.name}</div>
+                    <div className="text-xs text-gray-500">
+                      {((logoFile.size / 1024) * 0.001).toFixed(2)} MB
+                    </div>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => {
+                      setLogoFile(undefined);
+                      setLogoPreviewPath("");
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  {...logoDropzone.getRootProps()}
+                  className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-6 text-center"
+                >
+                  <input
+                    className="sr-only"
+                    {...logoDropzone.getInputProps()}
+                  />
+                  <Photo className="h-10 w-10 text-gray-400" />
+                  <div>
+                    <p className="text-sm">Upload a file or drag and drop</p>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG, WEBP. Max 2MB.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-3">
+              <FormLabel>Banner</FormLabel>
+              {backgroundFile ? (
+                <div className="flex w-full items-center justify-between rounded-lg border border-dashed border-gray-900/25 px-2 py-2">
+                  <div className="flex flex-col gap-1">
+                    <div className="text-sm font-medium">
+                      {backgroundFile.name}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {((backgroundFile.size / 1024) * 0.001).toFixed(2)} MB
+                    </div>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => {
+                      setBackgroundFile(undefined);
+                      setBackgroundPreviewPath("");
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  {...backgroundDropzone.getRootProps()}
+                  className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-6 text-center"
+                >
+                  <input
+                    className="sr-only"
+                    {...backgroundDropzone.getInputProps()}
+                  />
+                  <Photo className="h-10 w-10 text-gray-400" />
+                  <div>
+                    <p className="text-sm">Upload a file or drag and drop</p>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG, WEBP. Max 2MB.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
             <Button
               type="submit"
               className="w-full bg-summit-700 hover:bg-summit-700/95"
-              // disabled={isLoading}
+              disabled={isLoading}
             >
-              {/* {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving information
-            </>
-          ) : (
-            "Continue"
-          )} */}
-              Continue
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving information
+                </>
+              ) : (
+                "Create organization"
+              )}
             </Button>
           </form>
         </Form>
-        <div className="sticky top-8 flex w-full flex-col gap-3">
+        <div className="sticky top-0 flex w-full flex-col gap-3">
           <div className="text-sm font-semibold">Organization preview</div>
           <PreviewOrganization
             name={form.watch("name")}
@@ -422,6 +577,8 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
             state={form.watch("state")}
             description={form.watch("description")}
             isPrivate={form.watch("private")}
+            logoUrl={logoPreviewPath}
+            backgroundUrl={backgroundPreviewPath}
           />
         </div>
       </div>

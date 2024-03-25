@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { onboardingFormSchema } from "~/components/forms/OnboardingForm";
 
 export const userRouter = createTRPCRouter({
@@ -21,7 +21,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  getUserOnboarding: publicProcedure
+  getUserOnboarding: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input, ctx }) => {
       return ctx.db.user.findFirst({
@@ -30,7 +30,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  updateUserOnboarding: publicProcedure
+  updateUserOnboarding: protectedProcedure
     .input(z.object({ id: z.string(), onboardingData: onboardingFormSchema }))
     .mutation(({ input, ctx }) => {
       return ctx.db.user.update({
@@ -52,4 +52,31 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
+  getUserOrganizations: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.db.user.findUnique({
+        where: { id: input.id },
+        select: {
+          organizations: {
+            select: {
+              organization: {
+                select: {
+                  id: true,
+                  name: true,
+                  logoUrl: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    }),
 });
+
+export type OrginizationComboboxItem = {
+  id: string;
+  name: string;
+  logoUrl: string;
+};

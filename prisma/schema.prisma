@@ -64,9 +64,9 @@ model Session {
 }
 
 model User {
-    id                 String       @id @default(cuid())
+    id                 String             @id @default(cuid())
     name               String?
-    email              String?      @unique
+    email              String?            @unique
     emailVerified      DateTime?
     image              String?
     academicYear       String?
@@ -77,11 +77,44 @@ model User {
     state              String?
     phone              String?
     birthday           DateTime?
-    onboarded          Boolean      @default(false)
+    onboarded          Boolean            @default(false)
     accounts           Account[]
     sessions           Session[]
     posts              Post[]
     credentials        Credentials?
+    organizations      UserOrganization[]
+}
+
+model Organization {
+    id           String             @id @default(cuid())
+    name         String
+    username     String             @unique
+    private      Boolean            @default(false)
+    university   String
+    addressLine1 String?
+    addressLine2 String?
+    city         String
+    state        String
+    zip          String?
+    description  String?
+    joinCode     String             @unique
+    logoUrl      String
+    logoKey      String
+    bannerUrl    String
+    bannerKey    String
+    users        UserOrganization[]
+}
+
+model UserOrganization {
+    id             String       @id @default(cuid())
+    userId         String
+    organizationId String
+    user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, organizationId])
+    @@index([userId])
+    @@index([organizationId])
 }
 
 model Credentials {

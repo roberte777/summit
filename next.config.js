@@ -15,6 +15,12 @@ const config = {
         port: "",
         pathname: "/a/**",
       },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        port: "",
+        pathname: "/f/**",
+      },
     ],
   },
 

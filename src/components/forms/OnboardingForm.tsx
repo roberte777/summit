@@ -78,7 +78,6 @@ export function OnboardingForm({
 
   useEffect(() => {
     if (status === "success") {
-      console.log("Onboarding form submitted successfully");
       setOnboarded(true);
     }
     if (status === "error") {

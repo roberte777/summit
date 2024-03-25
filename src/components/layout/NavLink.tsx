@@ -4,7 +4,10 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import type { navigationLink } from "~/constants/navigationConfig";
 import classNames from "~/utils/classNames";
 
-function checkIsActive(path: string, asPath: string) {
+function checkIsActive(path: string, asPath: string, organizational: boolean) {
+  if (organizational) {
+    return asPath.endsWith(path);
+  }
   const basePath = asPath.split(/[?#]/)[0] ?? "/";
   return basePath === "/" + path || basePath.startsWith(`/${path}/`);
 }
@@ -20,13 +23,15 @@ export default function NavLink({
 }) {
   const { asPath } = useRouter();
   const [isActive, setIsActive] = useState(
-    checkIsActive(navigationLink.link, asPath),
+    checkIsActive(navigationLink.link, asPath, navigationLink.organizational),
   );
   const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
-    setIsActive(checkIsActive(navigationLink.link, asPath));
-  }, [asPath, navigationLink.link]);
+    setIsActive(
+      checkIsActive(navigationLink.link, asPath, navigationLink.organizational),
+    );
+  }, [asPath, navigationLink.link, navigationLink.organizational]);
 
   useEffect(() => {
     if (navigationLink.organizational && organizationId === "") {
@@ -39,16 +44,18 @@ export default function NavLink({
   return (
     <>
       <Link
-        href={`/${navigationLink.link}`}
+        href={
+          navigationLink.organizational
+            ? `/organization/${organizationId}/${navigationLink.link}`
+            : `/${navigationLink.link}`
+        }
         aria-disabled={isDisabled}
         tabIndex={isDisabled ? -1 : undefined}
         className={classNames(
-          "flex min-w-56 items-center gap-4 rounded-md px-4 py-2 font-semibold",
-          isDisabled
-            ? "pointer-events-none bg-white text-gray-300"
-            : isActive
-              ? "bg-summit-700/10 text-summit-700"
-              : "bg-white text-gray-500 hover:bg-gray-100",
+          "flex h-max flex-col items-center justify-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors hover:text-summit-700/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-300 disabled:pointer-events-none disabled:opacity-50 sm:h-10 sm:flex-row sm:justify-start sm:px-4 sm:text-sm",
+          isActive
+            ? "bg-summit-700/10 text-summit-700"
+            : "text-gray-500 hover:bg-gray-100",
         )}
         onClick={() => {
           if (setMobileNavOpen) {
@@ -57,7 +64,9 @@ export default function NavLink({
         }}
       >
         {isActive ? navigationLink.filledIcon : navigationLink.icon}
-        <div>{navigationLink.title}</div>
+        <div className="sr-only line-clamp-2 sm:not-sr-only">
+          {navigationLink.title}
+        </div>
       </Link>
     </>
   );

@@ -32,10 +32,10 @@ export default function Explore() {
   return (
     <>
       <div className="flex w-full flex-grow flex-col gap-4">
-        <div className="flex items-center justify-between gap-4 border-b border-gray-300 pb-4">
+        <div className="flex flex-col justify-between gap-4 border-b border-gray-300 pb-4 sm:flex-row sm:items-center">
           <h3 className="text-xl font-semibold text-summit-700">Explore</h3>
           <div className="flex items-center gap-2">
-            <div className="relative h-10 w-full min-w-[450px]">
+            <div className="relative h-10 w-full sm:min-w-[450px]">
               <Magnfier className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 className="pl-10"

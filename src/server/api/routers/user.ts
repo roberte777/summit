@@ -53,7 +53,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  getUserOrganizations: protectedProcedure
+  getUserOrganizationsForCombos: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input, ctx }) => {
       return ctx.db.user.findUnique({
@@ -68,6 +68,21 @@ export const userRouter = createTRPCRouter({
                   logoUrl: true,
                 },
               },
+            },
+          },
+        },
+      });
+    }),
+
+  getUserOrganizations: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.db.user.findUnique({
+        where: { id: input.id },
+        select: {
+          organizations: {
+            select: {
+              organization: true,
             },
           },
         },

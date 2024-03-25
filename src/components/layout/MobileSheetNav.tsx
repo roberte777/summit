@@ -2,24 +2,25 @@ import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { Sheet, SheetContent } from "../shadcn/ui/sheet";
 import navigationConfig from "~/constants/navigationConfig";
 import Link from "next/link";
-import Combobox, { type ComboboxItem } from "../shadcn/ui/combobox";
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "../shadcn/ui/button";
 import { LogOut, SquareUser } from "lucide-react";
+import OrganizationCombobox from "../custom/ui/organizationCombobox";
+import { type OrginizationComboboxItem } from "~/server/api/routers/user";
 
 export default function MobileSheetNav({
   mobileNavOpen,
   setMobileNavOpen,
   selectedOrganizationId,
   setSelectedOrganizationId,
-  items,
+  organizations,
 }: {
   mobileNavOpen: boolean;
   setMobileNavOpen: Dispatch<SetStateAction<boolean>>;
   selectedOrganizationId: string;
   setSelectedOrganizationId: Dispatch<SetStateAction<string>>;
-  items: ComboboxItem[];
+  organizations: OrginizationComboboxItem[];
 }) {
   const { data } = useSession();
 
@@ -63,11 +64,10 @@ export default function MobileSheetNav({
         </Link>
 
         <div className="mt-4 flex flex-col gap-4 border-t border-gray-200 pt-4">
-          <Combobox
-            itemName="organization"
+          <OrganizationCombobox
             value={selectedOrganizationId}
             setValue={setSelectedOrganizationId}
-            items={items}
+            organizations={organizations}
           />
           <div className="h-px w-full bg-gray-200" />
           <div className="flex items-center justify-between">

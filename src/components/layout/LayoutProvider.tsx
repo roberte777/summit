@@ -15,13 +15,6 @@ import WebTopNav from "./WebTopNav";
 import MobileTopNav from "./MobileTopNav";
 import WebSideNav from "./WebSideNav";
 import MobileSheetNav from "./MobileSheetNav";
-import { type ComboboxItem } from "../shadcn/ui/combobox";
-
-const FakeOrganizations: ComboboxItem[] = [
-  { value: "1", label: "Organization 1" },
-  { value: "2", label: "Organization 2" },
-  { value: "3", label: "Organization 3" },
-];
 
 //non layout pages
 const nonLayoutPages = ["/", "/signin"];
@@ -41,6 +34,9 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
     },
     { enabled: onboarded === false && !!data?.user?.id },
   );
+  const userOrganizations = api.user.getUserOrganizations.useQuery({
+    id: data?.user?.id ?? "",
+  });
 
   const [selectedOrganizationId, setSelectedOrganizationId] =
     useState<string>("");
@@ -61,6 +57,22 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
     }
   }, [onboarded]);
 
+  useEffect(() => {
+    if (router.pathname.includes("/organization/")) {
+      if (router.pathname === "/organization/create") {
+        return setSelectedOrganizationId("");
+      }
+      const organizationId = router.asPath.split("/")[2];
+      setSelectedOrganizationId(organizationId ?? "");
+    } else {
+      setSelectedOrganizationId("");
+    }
+  }, [router.asPath, router.pathname]);
+
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [selectedOrganizationId]);
+
   // if route is not in nonLayoutPages return children, else return layout
   if (nonLayoutPages.includes(router.pathname)) {
     return <>{children}</>;
@@ -72,6 +84,11 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
         <WebTopNav
           selectedOrganizationId={selectedOrganizationId}
           setSelectedOrganizationId={setSelectedOrganizationId}
+          organizations={
+            userOrganizations.data?.organizations.map(
+              (org) => org.organization,
+            ) ?? []
+          }
         />
         <MobileTopNav
           mobileNavOpen={mobileNavOpen}
@@ -92,7 +109,11 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
         setMobileNavOpen={setMobileNavOpen}
         selectedOrganizationId={selectedOrganizationId}
         setSelectedOrganizationId={setSelectedOrganizationId}
-        items={FakeOrganizations}
+        organizations={
+          userOrganizations.data?.organizations.map(
+            (org) => org.organization,
+          ) ?? []
+        }
       />
       <Dialog open={onboardDialogOpen}>
         <DialogContent

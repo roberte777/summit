@@ -46,4 +46,38 @@ export const organizationRouter = createTRPCRouter({
         },
       });
     }),
+
+  getOrganization: protectedProcedure
+    .input(z.object({ organizationId: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.db.organization.findUnique({
+        where: {
+          id: input.organizationId,
+        },
+        include: {
+          _count: {
+            select: {
+              users: true,
+            },
+          },
+        },
+      });
+    }),
+
+  isMember: protectedProcedure
+    .input(z.object({ organizationId: z.string(), userId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const userOrg = await ctx.db.userOrganization.findFirst({
+        where: {
+          organizationId: input.organizationId,
+          userId: input.userId,
+        },
+      });
+
+      if (userOrg) {
+        return true;
+      } else {
+        return false;
+      }
+    }),
 });

@@ -14,7 +14,7 @@ export default function OrganizationCreate() {
 
   return (
     <>
-      <div className="flex h-full w-full flex-grow flex-col gap-4">
+      <div className="flex h-full w-full flex-grow flex-col gap-4 pb-16 sm:pb-0">
         <h3 className="py-4 text-2xl font-semibold text-summit-700">
           Create an Organization
         </h3>

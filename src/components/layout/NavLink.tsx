@@ -4,7 +4,10 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import type { navigationLink } from "~/constants/navigationConfig";
 import classNames from "~/utils/classNames";
 
-function checkIsActive(path: string, asPath: string) {
+function checkIsActive(path: string, asPath: string, organizational: boolean) {
+  if (organizational) {
+    return asPath.endsWith(path);
+  }
   const basePath = asPath.split(/[?#]/)[0] ?? "/";
   return basePath === "/" + path || basePath.startsWith(`/${path}/`);
 }
@@ -20,13 +23,15 @@ export default function NavLink({
 }) {
   const { asPath } = useRouter();
   const [isActive, setIsActive] = useState(
-    checkIsActive(navigationLink.link, asPath),
+    checkIsActive(navigationLink.link, asPath, navigationLink.organizational),
   );
   const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
-    setIsActive(checkIsActive(navigationLink.link, asPath));
-  }, [asPath, navigationLink.link]);
+    setIsActive(
+      checkIsActive(navigationLink.link, asPath, navigationLink.organizational),
+    );
+  }, [asPath, navigationLink.link, navigationLink.organizational]);
 
   useEffect(() => {
     if (navigationLink.organizational && organizationId === "") {
@@ -39,7 +44,11 @@ export default function NavLink({
   return (
     <>
       <Link
-        href={`/${navigationLink.link}`}
+        href={
+          navigationLink.organizational
+            ? `/organization/${organizationId}/${navigationLink.link}`
+            : `/${navigationLink.link}`
+        }
         aria-disabled={isDisabled}
         tabIndex={isDisabled ? -1 : undefined}
         className={classNames(

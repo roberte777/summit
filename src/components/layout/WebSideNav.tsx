@@ -12,7 +12,7 @@ export default function WebSideNav({
     <div className="flex w-screen shrink-0 flex-col sm:w-[230px]">
       <div
         className={cn(
-          "flex-row justify-between gap-x-4 gap-y-2 p-4 text-center sm:flex-col sm:p-6 sm:text-left",
+          "flex-row items-center justify-between gap-x-4 gap-y-2 p-4 text-center sm:flex-col sm:items-stretch sm:p-6 sm:text-left",
           selectedOrganizationId ? "hidden sm:flex" : "flex",
         )}
       >
@@ -23,7 +23,7 @@ export default function WebSideNav({
           ))}
         <Link
           href="/organization/create"
-          className="w-full rounded-md bg-summit-700 px-2 py-1.5 text-center text-sm font-semibold text-white hover:bg-summit-700/95"
+          className="w-full rounded-md bg-summit-700 px-2 py-1.5 text-center text-sm font-semibold text-white hover:bg-summit-700/95 sm:py-2.5"
         >
           Create Organization
         </Link>
@@ -35,7 +35,11 @@ export default function WebSideNav({
             {navigationConfig
               .filter((link) => link.organizational)
               .map((link) => (
-                <NavLink key={link.link} navigationLink={link} />
+                <NavLink
+                  key={link.link}
+                  navigationLink={link}
+                  organizationId={selectedOrganizationId}
+                />
               ))}
           </div>
         </>

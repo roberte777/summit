@@ -52,4 +52,31 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
+  getUserOrganizations: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.db.user.findUnique({
+        where: { id: input.id },
+        select: {
+          organizations: {
+            select: {
+              organization: {
+                select: {
+                  id: true,
+                  name: true,
+                  logoUrl: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    }),
 });
+
+export type OrginizationComboboxItem = {
+  id: string;
+  name: string;
+  logoUrl: string;
+};

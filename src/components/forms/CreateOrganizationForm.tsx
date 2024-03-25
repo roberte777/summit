@@ -132,7 +132,7 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
   const publicValue = form.watch("public");
   const privateValue = form.watch("private");
 
-  const { mutate, error, isLoading, status } =
+  const { mutate, error, isLoading, status, data } =
     api.organization.createOrganization.useMutation();
 
   useEffect(() => {
@@ -146,7 +146,6 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
   const onSubmit = async (
     values: z.infer<typeof createOrganizationFormSchema>,
   ) => {
-    console.log("CreateOrganizationForm values: ", values);
     const fileData = {
       logoUrl: "",
       logoKey: "",
@@ -161,10 +160,6 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
         type: logoFile.type,
       });
       const organizationProfilePictureRes = await startUpload([logoToUpload]);
-      console.log(
-        "organizationProfilePictureRes: ",
-        organizationProfilePictureRes,
-      );
 
       if (!organizationProfilePictureRes) {
         toast({
@@ -189,10 +184,6 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
       const organizationBannerPictureRes = await startUpload([
         backgroundToUpload,
       ]);
-      console.log(
-        "organizationBannerPictureRes: ",
-        organizationBannerPictureRes,
-      );
 
       if (!organizationBannerPictureRes) {
         toast({
@@ -219,7 +210,7 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
         title: "Organization created",
         description: "Your organization has been created successfully.",
       });
-      void router.push("/dashboard");
+      void router.push(`/organization/${data.id}/home`);
     }
     if (status === "error") {
       toast({
@@ -228,7 +219,7 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
         description: error?.message ?? "Failed to create organization.",
       });
     }
-  }, [status, error, toast, router]);
+  }, [status, error, toast, router, data?.id]);
 
   return (
     <>
@@ -236,7 +227,7 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex w-3/4 flex-col gap-4"
+            className="flex w-full flex-col gap-4 sm:w-3/4"
           >
             <FormField
               control={form.control}
@@ -556,7 +547,7 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
               className="w-full bg-summit-700 hover:bg-summit-700/95"
               disabled={isLoading}
             >
-              {isLoading ? (
+              {isLoading || form.formState.isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Saving information
@@ -567,7 +558,7 @@ export function CreateOrganizationForm({ userId }: { userId: string }) {
             </Button>
           </form>
         </Form>
-        <div className="sticky top-0 flex w-full flex-col gap-3">
+        <div className="sticky top-0 hidden w-full flex-col gap-3 sm:flex">
           <div className="text-sm font-semibold">Organization preview</div>
           <PreviewOrganization
             name={form.watch("name")}

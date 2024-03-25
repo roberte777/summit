@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import Combobox, { type ComboboxItem } from "../shadcn/ui/combobox";
 import { type Dispatch, type SetStateAction, useState } from "react";
 import {
   DropdownMenu,
@@ -14,19 +13,17 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../shadcn/ui/avatar";
 import { LogOut, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-
-const FakeOrganizations: ComboboxItem[] = [
-  { value: "1", label: "Organization 1" },
-  { value: "2", label: "Organization 2" },
-  { value: "3", label: "Organization 3" },
-];
+import { type OrginizationComboboxItem } from "~/server/api/routers/user";
+import OrganizationCombobox from "../custom/ui/organizationCombobox";
 
 export default function WebTopNav({
   selectedOrganizationId,
   setSelectedOrganizationId,
+  organizations,
 }: {
   selectedOrganizationId: string;
   setSelectedOrganizationId: Dispatch<SetStateAction<string>>;
+  organizations: OrginizationComboboxItem[];
 }) {
   const { data } = useSession();
   const [avatarOpen, setAvatarOpen] = useState(false);
@@ -35,7 +32,7 @@ export default function WebTopNav({
     <div className="hidden h-20 w-full bg-white sm:flex">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-6 lg:px-8">
         <div className="flex items-center gap-8">
-          <Link href="/dashboard" className="w-full">
+          <Link href="/dashboard">
             <h1 className="flex w-full flex-row items-center gap-2 text-2xl font-bold text-summit-700">
               <Image
                 src="/logos/SimpleTeal.svg"
@@ -48,11 +45,10 @@ export default function WebTopNav({
               <span>Summit</span>
             </h1>
           </Link>
-          <Combobox
-            itemName="organization"
+          <OrganizationCombobox
             value={selectedOrganizationId}
             setValue={setSelectedOrganizationId}
-            items={FakeOrganizations}
+            organizations={organizations}
           />
         </div>
         <div className="flex items-center gap-4">

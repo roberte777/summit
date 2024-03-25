@@ -55,7 +55,7 @@ export default function UserOrgListItem({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex flex-col gap-1">
+          <div className="hidden flex-col gap-1 sm:flex">
             <div className="font-semibold">{actionTitle}</div>
             <div className="text-sm text-gray-500">{actionDescription}</div>
           </div>

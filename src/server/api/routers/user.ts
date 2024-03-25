@@ -53,7 +53,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  getUserOrganizations: protectedProcedure
+  getUserOrganizationsForCombos: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input, ctx }) => {
       return ctx.db.user.findUnique({
@@ -70,6 +70,48 @@ export const userRouter = createTRPCRouter({
               },
             },
           },
+        },
+      });
+    }),
+
+  getUserOrganizations: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      return ctx.db.user.findUnique({
+        where: { id: input.id },
+        select: {
+          organizations: {
+            select: {
+              organization: true,
+            },
+          },
+        },
+      });
+    }),
+
+  // search for users by name or username
+  exploreUsers: protectedProcedure
+    .input(z.object({ searchQuery: z.string() }))
+    .query(({ input, ctx }) => {
+      if (input.searchQuery.length < 3) return [];
+      return ctx.db.user.findMany({
+        where: {
+          OR: [
+            { name: { contains: input.searchQuery } },
+            {
+              credentials: {
+                username: { contains: input.searchQuery },
+              },
+            },
+          ],
+        },
+        select: {
+          id: true,
+          name: true,
+          academicMajor: true,
+          academicUniversity: true,
+          image: true,
+          credentials: { select: { username: true } },
         },
       });
     }),

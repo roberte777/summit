@@ -34,7 +34,7 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
     },
     { enabled: onboarded === false && !!data?.user?.id },
   );
-  const userOrganizations = api.user.getUserOrganizations.useQuery({
+  const userOrganizations = api.user.getUserOrganizationsForCombos.useQuery({
     id: data?.user?.id ?? "",
   });
 

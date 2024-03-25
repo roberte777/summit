@@ -21,6 +21,12 @@ const config = {
         port: "",
         pathname: "/f/**",
       },
+      {
+        protocol: "https",
+        hostname: "s.gravatar.com",
+        port: "",
+        pathname: "/avatar/**",
+      },
     ],
   },
 

@@ -80,4 +80,31 @@ export const organizationRouter = createTRPCRouter({
         return false;
       }
     }),
+
+  exploreOrganizations: protectedProcedure
+    .input(z.object({ searchQuery: z.string() }))
+    .query(async ({ input, ctx }) => {
+      if (input.searchQuery.length < 3) return [];
+      return ctx.db.organization.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: input.searchQuery,
+              },
+            },
+            {
+              username: {
+                contains: input.searchQuery,
+              },
+            },
+            {
+              joinCode: {
+                contains: input.searchQuery,
+              },
+            },
+          ],
+        },
+      });
+    }),
 });

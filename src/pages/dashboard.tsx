@@ -19,7 +19,6 @@ export default function Dashboard() {
     id: data?.user?.id ?? "",
   });
 
-  console.log(userOrganzations.data?.organizations);
   const [organizationJoinCode, setOrganizationJoinCode] = useState("");
 
   // If the session is loading, we display a loading message

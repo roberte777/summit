@@ -88,6 +88,33 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
+  // search for users by name or username
+  exploreUsers: protectedProcedure
+    .input(z.object({ searchQuery: z.string() }))
+    .query(({ input, ctx }) => {
+      if (input.searchQuery.length < 3) return [];
+      return ctx.db.user.findMany({
+        where: {
+          OR: [
+            { name: { contains: input.searchQuery } },
+            {
+              credentials: {
+                username: { contains: input.searchQuery },
+              },
+            },
+          ],
+        },
+        select: {
+          id: true,
+          name: true,
+          academicMajor: true,
+          academicUniversity: true,
+          image: true,
+          credentials: { select: { username: true } },
+        },
+      });
+    }),
 });
 
 export type OrginizationComboboxItem = {

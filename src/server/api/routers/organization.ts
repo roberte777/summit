@@ -107,4 +107,25 @@ export const organizationRouter = createTRPCRouter({
         },
       });
     }),
+
+  getAllUsersInOrganization: protectedProcedure
+    .input(z.object({ organizationId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      return ctx.db.userOrganization.findMany({
+        where: {
+          organizationId: input.organizationId,
+        },
+        include: {
+          user: {
+            include: {
+              credentials: {
+                select: {
+                  username: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    }),
 });

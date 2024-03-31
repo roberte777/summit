@@ -77,6 +77,7 @@ export default function Explore() {
           {organizationSearchData.data?.map((org) => (
             <UserOrgListItem
               key={org.id}
+              id={org.id}
               title={org.name}
               description={`@${org.username}`}
               imageUrl={org.logoUrl}
@@ -91,6 +92,7 @@ export default function Explore() {
           {userSearchData.data?.map((user) => (
             <UserOrgListItem
               key={user.id}
+              id={user.id}
               title={user.name ?? "No Name"}
               description={`@${user.credentials?.username}`}
               imageUrl={user.image ?? ""}

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { onboardingFormSchema } from "~/components/forms/OnboardingForm";
+import { type User } from "@prisma/client";
 
 export const userRouter = createTRPCRouter({
   findEmail: publicProcedure
@@ -121,4 +122,8 @@ export type OrginizationComboboxItem = {
   id: string;
   name: string;
   logoUrl: string;
+};
+
+export type UserWithCredentials = {
+  user: { credentials: { username: string } | null } & User;
 };

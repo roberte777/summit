@@ -42,12 +42,12 @@ export default function OrganizationHome() {
         <div className="h-36 w-full rounded-t-lg bg-gray-200" />
       )}
       {data.logoUrl ? (
-        <div className="absolute left-8 top-12 h-24 w-24 rounded-lg border-2 border-white sm:top-16 sm:h-36 sm:w-36">
+        <div className="absolute left-8 top-12 h-24 w-24 rounded-lg border-2 border-white bg-white sm:top-16 sm:h-36 sm:w-36">
           <Image
             src={data.logoUrl}
             alt="Organization logo."
             fill
-            className="rounded-lg object-cover"
+            className="rounded-lg object-contain"
           />
         </div>
       ) : (

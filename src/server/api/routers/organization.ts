@@ -16,34 +16,64 @@ export const organizationRouter = createTRPCRouter({
         }),
       }),
     )
-    .mutation(({ input, ctx }) => {
-      return ctx.db.organization.create({
-        data: {
-          name: input.organizationData.name,
-          username: input.organizationData.organizationUsername,
-          private: input.organizationData.private,
-          university: input.organizationData.university,
-          addressLine1: input.organizationData.addressLine1,
-          addressLine2: input.organizationData.addressLine2,
-          city: input.organizationData.city,
-          state: input.organizationData.state,
-          zip: input.organizationData.zip,
-          description: input.organizationData.description,
-          joinCode: input.organizationData.joinCode,
-          logoUrl: input.fileData.logoUrl,
-          logoKey: input.fileData.logoKey,
-          bannerUrl: input.fileData.bannerUrl,
-          bannerKey: input.fileData.bannerKey,
-          users: {
-            create: {
-              user: {
-                connect: {
-                  id: input.userId,
-                },
-              },
-            },
+    .mutation(async ({ input, ctx }) => {
+      // Start a transaction
+      return await ctx.db.$transaction(async (prisma) => {
+        // Step 1: Create the organization
+        const organization = await prisma.organization.create({
+          data: {
+            name: input.organizationData.name,
+            username: input.organizationData.organizationUsername,
+            private: input.organizationData.private,
+            university: input.organizationData.university,
+            addressLine1: input.organizationData.addressLine1,
+            addressLine2: input.organizationData.addressLine2,
+            city: input.organizationData.city,
+            state: input.organizationData.state,
+            zip: input.organizationData.zip,
+            description: input.organizationData.description,
+            joinCode: input.organizationData.joinCode,
+            logoUrl: input.fileData.logoUrl,
+            logoKey: input.fileData.logoKey,
+            bannerUrl: input.fileData.bannerUrl,
+            bannerKey: input.fileData.bannerKey,
           },
-        },
+        });
+
+        // Step 2: Create the roles including the "Owner" role
+        const ownerRole = await prisma.role.create({
+          data: {
+            name: "Owner",
+            description: "Organization owner.",
+            organizationId: organization.id,
+          },
+        });
+
+        await prisma.role.createMany({
+          data: [
+            {
+              name: "Admin",
+              description: "Organization admin.",
+              organizationId: organization.id,
+            },
+            {
+              name: "General",
+              description: "General organization member.",
+              organizationId: organization.id,
+            },
+          ],
+        });
+
+        // Step 3: Connect the user to the organization with the "Owner" role
+        await prisma.userOrganization.create({
+          data: {
+            userId: input.userId,
+            organizationId: organization.id,
+            roleId: ownerRole.id,
+          },
+        });
+
+        return organization;
       });
     }),
 

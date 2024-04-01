@@ -95,18 +95,20 @@ export default function OrganizationDirectory() {
         />
       </div>
       <div className="flex flex-col divide-y">
-        {users?.map((user) => (
-          <UserOrgListItem
-            key={user.userId}
-            id={user.userId}
-            imageUrl={user.user.image ?? ""}
-            title={user.user.name ?? "No name"}
-            description={user.user.credentials?.username ?? "No username"}
-            actionTitle="Member"
-            actionDescription={user.user.email ?? "No email"}
-            setClickedId={setSelectedUserId}
-          />
-        ))}
+        {users
+          ?.sort((a, b) => a.user.name?.localeCompare(b.user.name ?? "") ?? 0)
+          .map((user) => (
+            <UserOrgListItem
+              key={user.userId}
+              id={user.userId}
+              imageUrl={user.user.image ?? ""}
+              title={user.user.name ?? "No name"}
+              description={user.user.credentials?.username ?? "No username"}
+              actionTitle="Member"
+              actionDescription={user.user.email ?? "No email"}
+              setClickedId={setSelectedUserId}
+            />
+          ))}
         {users?.length === 0 && (
           <div className="flex h-32 items-center justify-center">
             <p className="text-gray-500">No members found.</p>

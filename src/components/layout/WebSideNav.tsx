@@ -14,7 +14,6 @@ export default function WebSideNav({
   isMember: boolean;
   role?: Role | null;
 }) {
-  console.log(isMember);
   return (
     <div className="flex w-screen shrink-0 flex-col sm:w-[230px]">
       <div

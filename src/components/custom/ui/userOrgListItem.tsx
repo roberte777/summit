@@ -84,7 +84,7 @@ function UserOrgListContent({
       <div className="flex items-center gap-4">
         <div
           className={cn(
-            "relative h-12 w-12",
+            "relative h-12 w-12 bg-white",
             squareImage ? "rounded-md" : "rounded-full",
           )}
         >
@@ -109,7 +109,7 @@ function UserOrgListContent({
               alt="List item image."
               fill
               className={cn(
-                "object-fill",
+                "object-contain",
                 squareImage ? "rounded-md" : "rounded-full",
               )}
             />

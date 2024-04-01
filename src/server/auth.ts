@@ -131,8 +131,11 @@ export const authOptions: NextAuthOptions = {
               },
             },
           },
+          include: {
+            user: true,
+          },
         });
-        return { id: newUser.id, username: newUser.username };
+        return newUser.user;
       },
     }),
     EmailProvider({

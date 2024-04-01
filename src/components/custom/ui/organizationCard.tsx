@@ -36,12 +36,12 @@ export default function OrganizationCard({
                 className="rounded-t-lg object-cover"
               />
             </div>
-            <div className="absolute left-4 top-4 h-12 w-12 rounded-lg border-2 border-white sm:top-6 sm:h-16 sm:w-16">
+            <div className="absolute left-4 top-4 h-12 w-12 rounded-lg border border-white bg-white sm:top-6 sm:h-16 sm:w-16">
               <Image
                 src={organization.logoUrl}
                 alt="Organization logo."
                 fill
-                className="rounded-lg object-cover"
+                className="rounded-lg object-contain"
               />
             </div>
             <div className="flex h-48 flex-col justify-between gap-1 px-4 pb-4 pt-10">

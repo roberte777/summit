@@ -2,6 +2,7 @@ import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useMediaQuery } from "usehooks-ts";
 import OrganizationCard from "~/components/custom/ui/organizationCard";
 import UserOrgListItem from "~/components/custom/ui/userOrgListItem";
 import { Button } from "~/components/shadcn/ui/button";
@@ -11,6 +12,7 @@ import { api } from "~/utils/api";
 
 export default function Explore() {
   const router = useRouter();
+  const isMobile = useMediaQuery("(max-width: 640px)");
   const routerSearchParams = useSearchParams();
   const searchParams = routerSearchParams.get("search") ?? "";
   const [inputValue, setInputValue] = useState<string>("");
@@ -36,12 +38,16 @@ export default function Explore() {
       <div className="flex w-full flex-grow flex-col gap-4">
         <div className="flex flex-col justify-between gap-4 border-b border-gray-300 pb-4 sm:flex-row sm:items-center">
           <h3 className="text-xl font-semibold text-summit-700">Explore</h3>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <div className="relative h-10 w-full sm:min-w-[450px]">
               <Magnfier className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 className="pl-10"
-                placeholder="Search by name, username, or organization join code..."
+                placeholder={
+                  isMobile
+                    ? "Search users or organizations..."
+                    : "Search by name, username, or organization join code..."
+                }
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 disabled={
@@ -73,6 +79,23 @@ export default function Explore() {
                 "Search"
               )}
             </Button>
+            {searchParams !== "" && (
+              <Button
+                variant="outline"
+                className="text-summit-700"
+                onClick={() => {
+                  void router.push(
+                    {
+                      pathname: "/explore",
+                    },
+                    undefined,
+                    { shallow: true },
+                  );
+                }}
+              >
+                Clear search
+              </Button>
+            )}
           </div>
         </div>
         <div className="flex flex-col divide-y">
@@ -104,21 +127,24 @@ export default function Explore() {
             />
           ))}
         </div>
-        {allOrganizations.data && (
-          <div className="flex flex-col gap-4 border-gray-300 pb-4">
-            <h3 className="text-xl font-semibold text-summit-700">
-              All Organizations
-            </h3>
-            <div className="flex items-center gap-4 overflow-x-auto">
-              {allOrganizations.data.map((organization) => (
-                <OrganizationCard
-                  key={organization.id}
-                  organization={organization}
-                />
-              ))}
+        {allOrganizations.data &&
+          userSearchData.data?.length == 0 &&
+          organizationSearchData.data?.length == 0 && (
+            <div className="flex flex-col gap-4 border-gray-300 pb-4">
+              <h3 className="text-xl font-semibold text-summit-700">
+                All Organizations
+              </h3>
+              <div className="flex items-center gap-4 overflow-x-auto">
+                {Array.isArray(allOrganizations.data) &&
+                  allOrganizations.data.map((organization) => (
+                    <OrganizationCard
+                      key={organization.id}
+                      organization={organization}
+                    />
+                  ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </>
   );

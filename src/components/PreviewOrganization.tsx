@@ -28,7 +28,7 @@ export default function PreviewOrganization({
         {backgroundUrl === "" ? (
           <div className="h-32 w-full rounded-t-lg bg-gray-200" />
         ) : (
-          <div className="relative h-32 w-full rounded-t-lg">
+          <div className="relative h-32 w-full rounded-t-lg bg-white">
             <Image
               src={backgroundUrl}
               alt="Uploaded background"
@@ -40,13 +40,14 @@ export default function PreviewOrganization({
         {logoUrl === "" ? (
           <div className="absolute left-8 top-16 h-32 w-32 rounded-lg bg-gray-400" />
         ) : (
-          <Image
-            src={logoUrl}
-            alt="Uploaded logo"
-            width={128}
-            height={128}
-            className="absolute left-8 top-16 rounded-lg border-2 border-white"
-          />
+          <div className="absolute left-8 top-16 h-32 w-32 rounded-lg border-2 border-white bg-gray-100">
+            <Image
+              src={logoUrl}
+              alt="Uploaded logo"
+              fill
+              className="object-contain"
+            />
+          </div>
         )}
         <div className="flex w-full flex-col gap-4 px-8 pb-4 pt-20">
           <div className="flex w-full flex-col gap-4 border-b border-gray-200 pb-4">

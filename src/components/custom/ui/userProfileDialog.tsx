@@ -34,7 +34,7 @@ export default function UserProfileDialog({
           <DrawerHeader className="flex items-center justify-between gap-4 border-b border-gray-200 py-4">
             <div className="flex items-center gap-4">
               {!user.image || user.image === "" ? (
-                <div className="h-full w-full rounded-full bg-gray-300" />
+                <div className="h-16 w-16 rounded-full bg-gray-300" />
               ) : (
                 <div className="relative h-16 w-16">
                   <Image
@@ -77,7 +77,17 @@ export default function UserProfileDialog({
         <DialogHeader className="flex flex-row items-center justify-between gap-4 border-b border-gray-200 py-4">
           <div className="flex items-center gap-4">
             {!user.image || user.image === "" ? (
-              <div className="h-full w-full rounded-full bg-gray-300" />
+              <div className="h-16 w-16 rounded-full bg-gray-300">
+                <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-gray-500">
+                  {user.name
+                    ? user.name
+                        ?.split(" ")
+                        .map((name) => name[0])
+                        .join("")
+                        .toUpperCase()
+                    : ""}
+                </div>
+              </div>
             ) : (
               <div className="relative h-16 w-16">
                 <Image

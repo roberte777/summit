@@ -141,4 +141,40 @@ export const organizationRouter = createTRPCRouter({
   getAllOrganizations: protectedProcedure.query(({ ctx }) => {
     return ctx.db.organization.findMany();
   }),
+
+  joinOrganization: protectedProcedure
+    .input(z.object({ organizationId: z.string(), userId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const generalRoleId = await ctx.db.role.findFirst({
+        where: {
+          AND: [{ name: "General" }, { organizationId: input.organizationId }],
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (generalRoleId?.id) {
+        return ctx.db.userOrganization.create({
+          data: {
+            organizationId: input.organizationId,
+            userId: input.userId,
+            roleId: generalRoleId.id,
+          },
+        });
+      } else {
+        throw new Error("Error joining organization.");
+      }
+    }),
+
+  leaveOrganization: protectedProcedure
+    .input(z.object({ organizationId: z.string(), userId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.userOrganization.deleteMany({
+        where: {
+          organizationId: input.organizationId,
+          userId: input.userId,
+        },
+      });
+    }),
 });

@@ -3,8 +3,13 @@ import { api } from "~/utils/api";
 import Image from "next/image";
 import { EyeSlash, PinFilled, SchoolFilled } from "~/svgs";
 import { useSession } from "next-auth/react";
+import { Button } from "~/components/shadcn/ui/button";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import LeaveOrganization from "~/components/custom/ui/leaveOrganization";
 
 export default function OrganizationHome() {
+  const router = useRouter();
   const params = useParams<{ id: string }>();
   const session = useSession();
   const { data, isLoading } = api.organization.getOrganization.useQuery({
@@ -14,6 +19,9 @@ export default function OrganizationHome() {
     userId: session.data?.user.id ?? "",
     organizationId: params?.id ?? "",
   });
+  const joinOrganization = api.organization.joinOrganization.useMutation();
+  const leaveOrganization = api.organization.leaveOrganization.useMutation();
+  const [leaveOrgDialogOpen, setLeaveOrgDialogOpen] = useState(false);
 
   if (isLoading || !data || checkMembership.isLoading) {
     return <div>Loading...</div>;
@@ -46,36 +54,66 @@ export default function OrganizationHome() {
         <div className="absolute left-8 top-16 h-32 w-32 rounded-lg bg-gray-400" />
       )}
       <div className="flex w-full flex-col gap-4 px-8 pb-4 pt-14 sm:pt-20">
-        <div className="flex w-full flex-col gap-4 border-b border-gray-200 pb-4">
-          <div className="flex flex-col gap-1">
-            <div className="text-2xl font-semibold">{data.name}</div>
-            <div className="text-sm text-gray-500">@{data.username}</div>
-          </div>
-          <div className="flex flex-col gap-2 text-xs text-gray-500 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-1">
-              <SchoolFilled className="h-3 w-3" />
-              <div>{data.university}</div>
+        <div className="flex w-full flex-col gap-4 border-b border-gray-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <div className="text-2xl font-semibold">{data.name}</div>
+              <div className="text-sm text-gray-500">@{data.username}</div>
             </div>
-            <div className="hidden h-0.5 w-0.5 rounded-full bg-gray-500 sm:block" />
-            <div className="flex items-center gap-1">
-              <PinFilled className="h-3 w-3" />
-              <div>
-                {data.city}, {data.state}
+            <div className="flex flex-col gap-2 text-xs text-gray-500 sm:flex-row sm:items-center">
+              <div className="flex items-center gap-1">
+                <SchoolFilled className="h-3 w-3" />
+                <div>{data.university}</div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
               <div className="hidden h-0.5 w-0.5 rounded-full bg-gray-500 sm:block" />
-              <div>
-                {data._count.users > 1 ? (
-                  <>{`${data._count.users} members`}</>
-                ) : (
-                  <>{`${data._count.users} member`}</>
-                )}
+              <div className="flex items-center gap-1">
+                <PinFilled className="h-3 w-3" />
+                <div>
+                  {data.city}, {data.state}
+                </div>
               </div>
-              <div className="h-0.5 w-0.5 rounded-full bg-gray-500" />
-              <div>{data.private ? "Private" : "Public"} organization</div>
+              <div className="flex items-center gap-2">
+                <div className="hidden h-0.5 w-0.5 rounded-full bg-gray-500 sm:block" />
+                <div>
+                  {data._count.users > 1 ? (
+                    <>{`${data._count.users} members`}</>
+                  ) : (
+                    <>{`${data._count.users} member`}</>
+                  )}
+                </div>
+                <div className="h-0.5 w-0.5 rounded-full bg-gray-500" />
+                <div>{data.private ? "Private" : "Public"} organization</div>
+              </div>
             </div>
           </div>
+          {!checkMembership.data?.isMember && !data.private && (
+            <Button
+              size="sm"
+              onClick={() => {
+                joinOrganization.mutate({
+                  userId: session.data?.user.id ?? "",
+                  organizationId: params?.id ?? "",
+                });
+
+                router.reload();
+              }}
+              disabled={joinOrganization.isLoading}
+            >
+              Join organization
+            </Button>
+          )}
+          {checkMembership.data?.isMember &&
+            checkMembership.data.userOrg?.role?.name !== "Owner" && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                onClick={() => setLeaveOrgDialogOpen(true)}
+                disabled={leaveOrganization.isLoading}
+              >
+                Leave organization
+              </Button>
+            )}
         </div>
         {data.private && !checkMembership.data?.isMember ? (
           <div className="flex h-32 flex-col items-center justify-center rounded-md bg-gray-100">
@@ -96,6 +134,12 @@ export default function OrganizationHome() {
           </>
         )}
       </div>
+      <LeaveOrganization
+        open={leaveOrgDialogOpen}
+        setOpen={setLeaveOrgDialogOpen}
+        userId={session.data?.user.id ?? ""}
+        organizationId={params?.id ?? ""}
+      />
     </div>
   );
 }

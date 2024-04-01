@@ -94,7 +94,15 @@ function UserOrgListContent({
                 "h-full w-full bg-gray-300",
                 squareImage ? "rounded-md" : "rounded-full",
               )}
-            ></div>
+            >
+              <div className="flex h-full w-full items-center justify-center font-semibold text-gray-500">
+                {title
+                  ?.split(" ")
+                  .map((name) => name[0])
+                  .join("")
+                  .toUpperCase()}
+              </div>
+            </div>
           ) : (
             <Image
               src={imageUrl}

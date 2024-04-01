@@ -137,4 +137,8 @@ export const organizationRouter = createTRPCRouter({
         },
       });
     }),
+
+  getAllOrganizations: protectedProcedure.query(({ ctx }) => {
+    return ctx.db.organization.findMany();
+  }),
 });

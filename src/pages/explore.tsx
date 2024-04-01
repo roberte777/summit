@@ -2,6 +2,7 @@ import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import OrganizationCard from "~/components/custom/ui/organizationCard";
 import UserOrgListItem from "~/components/custom/ui/userOrgListItem";
 import { Button } from "~/components/shadcn/ui/button";
 import { Input } from "~/components/shadcn/ui/input";
@@ -14,6 +15,7 @@ export default function Explore() {
   const searchParams = routerSearchParams.get("search") ?? "";
   const [inputValue, setInputValue] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const allOrganizations = api.organization.getAllOrganizations.useQuery();
 
   const organizationSearchData = api.organization.exploreOrganizations.useQuery(
     {
@@ -102,6 +104,21 @@ export default function Explore() {
             />
           ))}
         </div>
+        {allOrganizations.data && (
+          <div className="flex flex-col gap-4 border-gray-300 pb-4">
+            <h3 className="text-xl font-semibold text-summit-700">
+              All Organizations
+            </h3>
+            <div className="flex items-center gap-4 overflow-x-auto">
+              {allOrganizations.data.map((organization) => (
+                <OrganizationCard
+                  key={organization.id}
+                  organization={organization}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

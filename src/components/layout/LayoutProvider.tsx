@@ -41,6 +41,11 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
   const [selectedOrganizationId, setSelectedOrganizationId] =
     useState<string>("");
 
+  const checkMembership = api.organization.isMember.useQuery({
+    userId: data?.user?.id ?? "",
+    organizationId: selectedOrganizationId,
+  });
+
   useEffect(() => {
     if (status === "authenticated" && !onboarded) {
       if (userOnboarded.data) {
@@ -82,7 +87,9 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
     <>
       <div className="flex h-full w-full flex-col">
         <WebTopNav
-          selectedOrganizationId={selectedOrganizationId}
+          selectedOrganizationId={
+            checkMembership.data?.isMember ? selectedOrganizationId : ""
+          }
           setSelectedOrganizationId={setSelectedOrganizationId}
           organizations={
             userOrganizations.data?.organizations.map(
@@ -97,7 +104,11 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
         <div className="h-px w-screen bg-gray-200" />
         <div className="flex sm:h-[calc(100vh-5rem-1px)]">
           <div className="mx-auto flex min-w-0 max-w-7xl grow flex-col sm:flex-row sm:py-6">
-            <WebSideNav selectedOrganizationId={selectedOrganizationId} />
+            <WebSideNav
+              selectedOrganizationId={selectedOrganizationId}
+              isMember={checkMembership.data?.isMember ?? false}
+              role={checkMembership.data?.userOrg?.role}
+            />
             <div className="flex w-screen grow flex-col overflow-y-auto px-4 sm:w-full sm:p-6">
               {children}
             </div>
@@ -107,7 +118,9 @@ export default function LayoutProvider({ children }: { children: ReactNode }) {
       <MobileSheetNav
         mobileNavOpen={mobileNavOpen}
         setMobileNavOpen={setMobileNavOpen}
-        selectedOrganizationId={selectedOrganizationId}
+        selectedOrganizationId={
+          checkMembership.data?.isMember ? selectedOrganizationId : ""
+        }
         setSelectedOrganizationId={setSelectedOrganizationId}
         organizations={
           userOrganizations.data?.organizations.map(

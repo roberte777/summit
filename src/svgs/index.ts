@@ -16,6 +16,8 @@ export { default as Eye } from "./eye.svg";
 export { default as EyeSlash } from "./eye-slash.svg";
 export { default as FileContent } from "./file-content.svg";
 export { default as FileContentFilled } from "./file-content-filled.svg";
+export { default as Gear } from "./gear.svg";
+export { default as GearFilled } from "./gear-filled.svg";
 export { default as House } from "./house.svg";
 export { default as HouseFilled } from "./house-filled.svg";
 export { default as Magnfier } from "./magnifier.svg";

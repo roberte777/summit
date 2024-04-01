@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import type { navigationLink } from "~/constants/navigationConfig";
-import classNames from "~/utils/classNames";
+import { cn } from "~/utils/shadcn";
 
 function checkIsActive(path: string, asPath: string, organizational: boolean) {
   if (organizational) {
@@ -16,16 +16,18 @@ export default function NavLink({
   navigationLink,
   organizationId,
   setMobileNavOpen,
+  disabled,
 }: {
   navigationLink: navigationLink;
   organizationId?: string;
   setMobileNavOpen?: Dispatch<SetStateAction<boolean>>;
+  disabled?: boolean;
 }) {
   const { asPath } = useRouter();
   const [isActive, setIsActive] = useState(
     checkIsActive(navigationLink.link, asPath, navigationLink.organizational),
   );
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(disabled ?? false);
 
   useEffect(() => {
     setIsActive(
@@ -34,12 +36,14 @@ export default function NavLink({
   }, [asPath, navigationLink.link, navigationLink.organizational]);
 
   useEffect(() => {
-    if (navigationLink.organizational && organizationId === "") {
+    if (disabled) {
+      return setIsDisabled(true);
+    } else if (navigationLink.organizational && organizationId === "") {
       setIsDisabled(true);
     } else {
       setIsDisabled(false);
     }
-  }, [organizationId, navigationLink.organizational]);
+  }, [organizationId, navigationLink.organizational, disabled]);
 
   return (
     <>
@@ -51,11 +55,12 @@ export default function NavLink({
         }
         aria-disabled={isDisabled}
         tabIndex={isDisabled ? -1 : undefined}
-        className={classNames(
+        className={cn(
           "flex h-max flex-col items-center justify-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors hover:text-summit-700/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-300 disabled:pointer-events-none disabled:opacity-50 sm:h-10 sm:flex-row sm:justify-start sm:px-4 sm:text-sm",
           isActive
             ? "bg-summit-700/10 text-summit-700"
             : "text-gray-500 hover:bg-gray-100",
+          isDisabled && "pointer-events-none cursor-not-allowed opacity-50",
         )}
         onClick={() => {
           if (setMobileNavOpen) {

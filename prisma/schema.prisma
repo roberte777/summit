@@ -103,18 +103,22 @@ model Organization {
     bannerUrl    String
     bannerKey    String
     users        UserOrganization[]
+    roles        Role[]
 }
 
 model UserOrganization {
     id             String       @id @default(cuid())
     userId         String
     organizationId String
+    roleId         String?
     user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
     organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    role           Role?        @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
     @@unique([userId, organizationId])
     @@index([userId])
     @@index([organizationId])
+    @@index([roleId])
 }
 
 model Credentials {
@@ -134,4 +138,15 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Role {
+    id             String             @id @default(cuid())
+    name           String
+    description    String?
+    organizationId String
+    organization   Organization       @relation(fields: [organizationId], references: [id])
+    users          UserOrganization[]
+
+    @@index([organizationId])
 }

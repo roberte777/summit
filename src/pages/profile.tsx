@@ -20,6 +20,7 @@ export default function Profile() {
       void router.push("/api/auth/signin");
     },
   });
+  console.log(data?.user);
 
   const [enhancedImage, setEnhancedImage] = useState("");
   const userData = api.user.getUser.useQuery({

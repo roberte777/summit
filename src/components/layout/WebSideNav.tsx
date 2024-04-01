@@ -2,11 +2,17 @@ import navigationConfig from "~/constants/navigationConfig";
 import NavLink from "./NavLink";
 import Link from "next/link";
 import { cn } from "~/utils/shadcn";
+import { type Role } from "@prisma/client";
+import { Gear, GearFilled } from "~/svgs";
 
 export default function WebSideNav({
   selectedOrganizationId,
+  isMember,
+  role,
 }: {
   selectedOrganizationId: string;
+  isMember: boolean;
+  role?: Role | null;
 }) {
   return (
     <div className="flex w-screen shrink-0 flex-col sm:w-[230px]">
@@ -39,8 +45,20 @@ export default function WebSideNav({
                   key={link.link}
                   navigationLink={link}
                   organizationId={selectedOrganizationId}
+                  disabled={!isMember}
                 />
               ))}
+            {role?.name === "Owner" && (
+              <NavLink
+                navigationLink={{
+                  title: "Settings",
+                  link: "settings",
+                  icon: <Gear className="h-4 w-4 text-inherit" />,
+                  filledIcon: <GearFilled className="h-4 w-4 text-inherit" />,
+                  organizational: true,
+                }}
+              />
+            )}
           </div>
         </>
       )}

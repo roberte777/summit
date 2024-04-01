@@ -40,7 +40,7 @@ export default function PreviewOrganization({
         {logoUrl === "" ? (
           <div className="absolute left-8 top-16 h-32 w-32 rounded-lg bg-gray-400" />
         ) : (
-          <div className="absolute left-8 top-16 h-32 w-32 rounded-lg border-2 border-white bg-gray-100">
+          <div className="absolute left-8 top-16 h-32 w-32 rounded-lg border-2 border-white bg-white">
             <Image
               src={logoUrl}
               alt="Uploaded logo"

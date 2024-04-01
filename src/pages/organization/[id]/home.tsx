@@ -77,7 +77,7 @@ export default function OrganizationHome() {
             </div>
           </div>
         </div>
-        {data.private && !checkMembership.data ? (
+        {data.private && !checkMembership.data?.isMember ? (
           <div className="flex h-32 flex-col items-center justify-center rounded-md bg-gray-100">
             <EyeSlash className="h-6 w-6 text-gray-500" />
             <div className="text-sm font-semibold">

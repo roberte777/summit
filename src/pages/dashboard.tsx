@@ -29,7 +29,7 @@ export default function Dashboard() {
   return (
     <>
       <div className="flex w-full flex-grow flex-col gap-4">
-        <div className="flex flex-col gap-4 border-b border-gray-300 pb-4">
+        <div className="flex flex-col gap-4 border-gray-300 pb-4">
           <h3 className="text-xl font-semibold text-summit-700">
             My Organizations
           </h3>
@@ -42,7 +42,7 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-4 border-b border-gray-300 pb-4 sm:flex-row sm:items-center">
+        {/* <div className="flex flex-col gap-4 border-b border-gray-300 pb-4 sm:flex-row sm:items-center">
           <TextField
             input={organizationJoinCode}
             setInput={setOrganizationJoinCode}
@@ -61,7 +61,7 @@ export default function Dashboard() {
           <h3 className="text-xl font-semibold text-summit-700">
             Upcoming Events
           </h3>
-        </div>
+        </div> */}
       </div>
     </>
   );

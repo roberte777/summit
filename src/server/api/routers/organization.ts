@@ -72,12 +72,21 @@ export const organizationRouter = createTRPCRouter({
           organizationId: input.organizationId,
           userId: input.userId,
         },
+        include: {
+          role: true,
+        },
       });
 
       if (userOrg) {
-        return true;
+        return {
+          isMember: true,
+          userOrg: userOrg,
+        };
       } else {
-        return false;
+        return {
+          isMember: false,
+          userOrg: null,
+        };
       }
     }),
 

@@ -83,6 +83,7 @@ model User {
     posts              Post[]
     credentials        Credentials?
     organizations      UserOrganization[]
+    events             EventAttendee[]
 }
 
 model Organization {
@@ -104,6 +105,8 @@ model Organization {
     bannerKey    String
     users        UserOrganization[]
     roles        Role[]
+    events       Event[]
+    categories   EventCategory[]
 }
 
 model UserOrganization {
@@ -149,4 +152,62 @@ model Role {
     users          UserOrganization[]
 
     @@index([organizationId])
+}
+
+model Event {
+    id             String          @id @default(cuid())
+    name           String
+    description    String?
+    categoryId     String?
+    category       EventCategory?  @relation(fields: [categoryId], references: [id])
+    startTime      DateTime
+    endTime        DateTime
+    startDate      DateTime
+    endDate        DateTime
+    repeatPattern  String? // Custom format to indicate repetition
+    slots          Int? // Null for unlimited
+    location       Location?       @relation(fields: [locationId], references: [id])
+    locationId     String?
+    organizationId String
+    organization   Organization    @relation(fields: [organizationId], references: [id])
+    attendees      EventAttendee[]
+
+    @@index([organizationId])
+    @@index([categoryId])
+    @@index([locationId])
+}
+
+model EventCategory {
+    id             String       @id @default(cuid())
+    name           String
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id])
+    events         Event[]
+
+    @@unique([name, organizationId])
+    @@index([organizationId])
+}
+
+model Location {
+    id        String  @id @default(cuid())
+    online    Boolean
+    onlineUrl String?
+    address   String?
+    city      String?
+    state     String?
+    zip       String?
+    custom    String? // For non-specific locations e.g., "Online" or "TBD"
+    events    Event[]
+}
+
+model EventAttendee {
+    id      String @id @default(cuid())
+    userId  String
+    eventId String
+    user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    status  String // Example: 'Confirmed', 'Pending'
+
+    @@unique([userId, eventId])
+    @@index([eventId])
 }

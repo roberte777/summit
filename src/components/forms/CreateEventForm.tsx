@@ -12,13 +12,15 @@ import {
 } from "../shadcn/ui/form";
 import { Input } from "../shadcn/ui/input";
 import { AdvancedTextArea } from "../custom/ui/advancedTextarea";
+import { useState } from "react";
+import { type Tag, TagInput } from "../shadcn/ui/tag-input";
 
 export const createEventFormSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
   description: z
     .string()
     .max(250, "Description must be at most 250 characters long"),
-  categoryId: z.string(),
+  categories: z.array(z.object({ id: z.string(), text: z.string() })),
   startTime: z.date(),
   endTime: z.date(),
   startDate: z.date().min(new Date(), "Start date must be in the future"),
@@ -41,7 +43,6 @@ export function CreateEventForm() {
     defaultValues: {
       name: "",
       description: "",
-      categoryId: "",
       startTime: new Date(),
       endTime: new Date(),
       startDate: new Date(),
@@ -60,6 +61,8 @@ export function CreateEventForm() {
   const onSubmit = (values: z.infer<typeof createEventFormSchema>) => {
     console.log(values);
   };
+
+  const [tags, setTags] = useState<Tag[]>([]);
 
   return (
     <>
@@ -96,6 +99,31 @@ export function CreateEventForm() {
                   />
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categories"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Categories</FormLabel>
+                <FormControl>
+                  <TagInput
+                    {...field}
+                    placeholder="Enter up to 5 categories"
+                    tags={tags}
+                    setTags={(newTags) => {
+                      setTags(newTags);
+                      form.setValue("categories", newTags as [Tag, ...Tag[]]);
+                    }}
+                    shape="rounded"
+                    animation="fadeIn"
+                    maxTags={5}
+                    truncate={10}
+                    inputFieldPostion="top"
+                  />
+                </FormControl>
               </FormItem>
             )}
           />

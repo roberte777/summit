@@ -153,7 +153,11 @@ export function CreateEventForm({
                   Attendees
                 </TabsTrigger>
               </TabsList>
-              <Button type="submit" className="mr-6 w-max" size="sm">
+              <Button
+                type="submit"
+                className="mr-6 hidden w-max sm:block"
+                size="sm"
+              >
                 Create event
               </Button>
             </div>
@@ -495,7 +499,12 @@ export function CreateEventForm({
                               className="w-28"
                               placeholder="Unlimited"
                               onChange={(e) => {
-                                field.onChange(e);
+                                if (e.target.value === "") {
+                                  form.setValue("slots", undefined);
+                                  setSlots(-1);
+                                  return;
+                                }
+                                form.setValue("slots", Number(e.target.value));
                                 setSlots(Number(e.target.value));
                               }}
                             />
@@ -644,6 +653,9 @@ export function CreateEventForm({
               </ScrollArea>
             </TabsContent>
           </Tabs>
+          <Button type="submit" className="w-full sm:hidden" size="sm">
+            Create event
+          </Button>
         </form>
       </Form>
     </>

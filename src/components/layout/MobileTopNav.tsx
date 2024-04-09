@@ -17,7 +17,7 @@ export default function MobileTopNav({
         <Link href="/dashboard" className="w-full">
           <h1 className="flex w-full flex-row items-center gap-2 text-2xl font-bold text-summit-700">
             <Image
-              src="/logos/SimpleTeal.svg"
+              src="/logos/SummitLogo-Simple-Filled.svg"
               alt="Summit Logo"
               height={32}
               width={32}

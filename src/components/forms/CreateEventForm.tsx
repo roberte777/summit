@@ -162,7 +162,7 @@ export function CreateEventForm({
               </Button>
             </div>
             <TabsContent value="general">
-              <ScrollArea className="h-[60vh] w-full px-6">
+              <ScrollArea className="h-[45vh] w-full px-6 sm:h-[60vh]">
                 <div className="flex w-full flex-col gap-4">
                   <FormField
                     control={form.control}
@@ -461,7 +461,7 @@ export function CreateEventForm({
               </ScrollArea>
             </TabsContent>
             <TabsContent value="attendees">
-              <ScrollArea className="h-[60vh] w-full">
+              <ScrollArea className="h-[45vh] w-full sm:h-[60vh]">
                 <div className="flex w-full flex-col gap-4 px-6 py-2">
                   <FormField
                     control={form.control}

@@ -83,6 +83,8 @@ model User {
     posts              Post[]
     credentials        Credentials?
     organizations      UserOrganization[]
+    events             EventAttendee[]
+    Event              Event[]
 }
 
 model Organization {
@@ -104,6 +106,8 @@ model Organization {
     bannerKey    String
     users        UserOrganization[]
     roles        Role[]
+    events       Event[]
+    categories   EventCategory[]
 }
 
 model UserOrganization {
@@ -149,4 +153,73 @@ model Role {
     users          UserOrganization[]
 
     @@index([organizationId])
+}
+
+model Event {
+    id             String              @id @default(cuid())
+    name           String
+    description    String?
+    startTime      DateTime
+    endTime        DateTime
+    startDate      DateTime
+    endDate        DateTime
+    repeatPattern  String? // Custom format to indicate repetition
+    open           Boolean             @default(false) // open for anyone in the organization to join
+    slots          Int? // Null for unlimited
+    createdById    String
+    createdBy      User                @relation(fields: [createdById], references: [id])
+    location       Location?           @relation(fields: [locationId], references: [id])
+    locationId     String?
+    organizationId String
+    organization   Organization        @relation(fields: [organizationId], references: [id])
+    attendees      EventAttendee[]
+    categories     EventCategoryLink[]
+
+    @@index([organizationId])
+    @@index([locationId])
+    @@index([createdById])
+}
+
+model EventCategoryLink {
+    id         String        @id @default(cuid())
+    eventId    String
+    event      Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    categoryId String
+    category   EventCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    @@unique([eventId, categoryId])
+    @@index([eventId])
+    @@index([categoryId])
+}
+
+model EventCategory {
+    id             String              @id @default(cuid())
+    name           String
+    organizationId String
+    organization   Organization        @relation(fields: [organizationId], references: [id])
+    events         EventCategoryLink[]
+
+    @@unique([name, organizationId])
+    @@index([organizationId])
+}
+
+model Location {
+    id        String  @id @default(cuid())
+    online    Boolean
+    onlineUrl String?
+    location  String?
+    events    Event[]
+}
+
+model EventAttendee {
+    id       String  @id @default(cuid())
+    userId   String
+    eventId  String
+    user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    event    Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    status   String // Example: 'Confirmed', 'Pending'
+    required Boolean
+
+    @@unique([userId, eventId])
+    @@index([eventId])
 }

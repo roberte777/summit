@@ -10,6 +10,7 @@ export { default as CalendarSparkleFilled } from "./calendar-sparkle-filled.svg"
 export { default as ChevronLeft } from "./chevron-left.svg";
 export { default as CircleCheck } from "./circle-check.svg";
 export { default as CircleCheckFilled } from "./circle-check-filled.svg";
+export { default as Clock } from "./clock.svg";
 export { default as Dashboard } from "./view-all.svg";
 export { default as DashboardFilled } from "./view-all-filled.svg";
 export { default as Eye } from "./eye.svg";
@@ -31,3 +32,4 @@ export { default as School } from "./school.svg";
 export { default as SchoolFilled } from "./school-filled.svg";
 export { default as SummitIllustration } from "./illustrations/summit.svg";
 export { default as TeamIllustration } from "./illustrations/team.svg";
+export { default as UsersGroup } from "./users-group.svg";

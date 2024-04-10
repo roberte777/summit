@@ -35,7 +35,7 @@ export default function WebTopNav({
           <Link href="/dashboard">
             <h1 className="flex w-full flex-row items-center gap-2 text-2xl font-bold text-summit-700">
               <Image
-                src="/logos/SimpleTeal.svg"
+                src="/logos/SummitLogo-Simple-Filled.svg"
                 alt="Summit Logo"
                 height={36}
                 width={36}

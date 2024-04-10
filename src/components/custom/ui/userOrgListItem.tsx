@@ -121,7 +121,7 @@ function UserOrgListContent({
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <div className="hidden flex-col gap-1 sm:flex">
+        <div className="hidden flex-col gap-1 sm:flex sm:items-end">
           <div className="font-semibold">{actionTitle}</div>
           <div className="text-sm text-gray-500">{actionDescription}</div>
         </div>

@@ -29,6 +29,8 @@ const config = withUt({
           "300": "#84A98C",
           "500": "#52796F",
           "700": "#354F52",
+          "700-50": "#E8EFF0",
+          "700-100": "#D1E0E1",
           "900": "#2F3E46",
         },
       },
@@ -41,10 +43,15 @@ const config = withUt({
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "fade-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "animate-fadeIn": "fade-in 0.3s ease-in-out",
       },
       screens: {
         "mobile-sm": "320px",

@@ -36,6 +36,7 @@ export default function LoginCarousel() {
 
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap() + 1);
+      api.plugins.autoplay?.reset();
     });
   }, [api]);
 
